@@ -1,14 +1,47 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
+import { DynamicListInput } from "../../components/DynamicListInput";
 import './NovaEimeria.css';
+import description_icon from '../../assets/Task-List.svg'
 
+interface Iscore {
+    level: number,
+    img: string,
+    description: Array<string>
+}
 
+interface eimeriaProps{
+    name: string,
+    img_local: string,
+    category: string,
+    general_description: Array<string>,
+    place_of_action: Array<string>,
+    clinical_signs: Array<string>,
+    score: Array<Iscore>
+}
 
 export function NovaEimeria(){
     useEffect(() => {
         document.title = "Nova Eimeria"
+    }, []);
+
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    const [eimeria, setEimeria] = useState<eimeriaProps>({
+        name: '',
+        img_local: '',
+        category: '',
+        general_description: [
+            'Aves tristes (prostradas)',
+            'Penas arrepiadas',
+            'Baixo consumo de ração e água',
+            'Aumento da mortalidade'
+        ],
+        place_of_action: [],
+        clinical_signs: [],
+        score: []
     });
+
     return(
         <>
         <div className="grid grid-cols-[250px_1fr] h-screen">
@@ -22,14 +55,14 @@ export function NovaEimeria(){
                     {/* Campo Nome */}
                     <div className="flex items-center col-span-4 gap-3">
                         Nome:
-                        <input className="h-[45px] bg-mygray-200 border-mygray-400 border rounded-[8px] px-2" type="text" placeholder="Nome"/>
+                        <input name="name" className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
                     </div>
 
                     {/* Campo Imagem */}
                     <div className="flex items-center col-span-4 gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Picture-Double-Landscape--Streamline-Ultimate" height="24" width="24"><desc>Picture Double Landscape Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.75 5.25v-0.978c0.0015 -0.26409 -0.0491 -0.52588 -0.1488 -0.77042 -0.0998 -0.24454 -0.2467 -0.46704 -0.4324 -0.6548 -0.1857 -0.18776 -0.4066 -0.3371 -0.65 -0.4395 -0.2435 -0.1024 -0.5047 -0.15584 -0.7688 -0.15728H2.75003c-0.26409 0.00144 -0.52531 0.05488 -0.76874 0.15728 -0.24344 0.1024 -0.46432 0.25174 -0.65004 0.4395 -0.18572 0.18776 -0.332633 0.41026 -0.432359 0.6548 -0.099726 0.24454 -0.150309 0.50633 -0.148861 0.77042v9.456c-0.001448 0.2641 0.049135 0.5259 0.148861 0.7704 0.099726 0.2446 0.246639 0.4671 0.432359 0.6548 0.18572 0.1878 0.4066 0.3371 0.65004 0.4395 0.24343 0.1024 0.50465 0.1559 0.76874 0.1573" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m11.339 21.7499 4.439 -6.307c0.1304 -0.1863 0.3015 -0.3404 0.5003 -0.4508 0.1987 -0.1105 0.42 -0.1743 0.6471 -0.1866 0.227 -0.0123 0.4539 0.0271 0.6634 0.1154 0.2096 0.0882 0.3964 0.223 0.5462 0.394l4.938 5.643" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c-0.2071 0 -0.375 -0.1679 -0.375 -0.375s0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c0.2071 0 0.375 -0.1679 0.375 -0.375s-0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.25 8.25H7c-0.55228 0 -1 0.44772 -1 1v11.5c0 0.5523 0.44772 1 1 1h15.25c0.5523 0 1 -0.4477 1 -1V9.25c0 -0.55228 -0.4477 -1 -1 -1Z" stroke-width="1.5"></path></svg>
                         Imagem da área de lesão:
-                        <button className="h-[45px] bg-mygray-200 border-mygray-400 border 
+                        <button className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 
                         rounded-[8px] font-bold px-8 hover:bg-mygray-400">
                             SELECIONAR
                         </button>
@@ -39,7 +72,7 @@ export function NovaEimeria(){
                     <div className="flex items-center col-span-6 gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Move-To-Bottom--Streamline-Ultimate" height="24" width="24"><desc>Move To Bottom Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 0.748047h6V6.74805h-6V0.748047Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 10.498v-0.74995h1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M2.25 14.248H0.75v-0.75" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M6.75 13.498v0.75h-1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M2.25 23.248H0.75v-1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M6.75 21.748v1.5h-1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M5.25 9.74805h1.5v0.74995" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 18.748v-1.5h1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M5.25 17.248h1.5v1.5" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m15 15.748 -3.75 3.75 3.75 3.75" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 19.5h4.5c1.9891 0 3.8968 -0.7902 5.3033 -2.1967C22.4598 15.8968 23.25 13.9891 23.25 12s-0.7902 -3.89678 -2.1967 -5.3033C19.6468 5.29018 17.7391 4.5 15.75 4.5h-4.5" stroke-width="1.5"></path></svg>
                         Categoria:
-                        <div className="h-[45px] bg-mygray-200 border-mygray-400 border flex items-center *:items-center rounded-[8px] px-2 gap-8">
+                        <div className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 flex items-center *:items-center rounded-[8px] px-2 gap-8">
                             <label className="flex gap-2">
                                 <input type="radio" name="Principais espécies" value={'Principais espécies'}/>
                                 Principais espécies
@@ -55,42 +88,172 @@ export function NovaEimeria(){
                         </div>
                     </div>
 
+
                     {/* Campo Descrição geral */}
                     <div className="grid grid-cols-1 col-span-4 gap-3">
+                        <DynamicListInput title="Descrição geral" 
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Task-List-Approve--Streamline-Ultimate" height="24" width="24"><desc>Task List Approve Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 14.2612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 18.7612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 9.76123h5.25" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c-0.20711 0 -0.375 -0.16787 -0.375 -0.37497 0 -0.20711 0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c0.20711 0 0.375 -0.16787 0.375 -0.37497 0 -0.20711 -0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M15.75 4.5h3.75c0.3978 0 0.7794 0.15804 1.0607 0.43934S21 5.60218 21 6v15.75c0 0.3978 -0.158 0.7794 -0.4393 1.0607s-0.6629 0.4393 -1.0607 0.4393h-15c-0.39782 0 -0.77936 -0.158 -1.06066 -0.4393C3.15804 22.5294 3 22.1478 3 21.75V6c0 -0.39782 0.15804 -0.77936 0.43934 -1.06066C3.72064 4.65804 4.10218 4.5 4.5 4.5h3.75c0 -0.99456 0.39509 -1.94839 1.09835 -2.65165C10.0516 1.14509 11.0054 0.75 12 0.75c0.9946 0 1.9484 0.39509 2.6517 1.09835C15.3549 2.55161 15.75 3.50544 15.75 4.5Z" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c-0.2071 0 -0.375 -0.1679 -0.375 -0.375 0 -0.20711 0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c0.2071 0 0.375 -0.1679 0.375 -0.375 0 -0.20711 -0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path></svg>} 
+                        placeholder="Descrição" 
+                        list={eimeria.general_description} 
+                        onRemove={(index: number) => {
+                            setEimeria((prev) => ({
+                                ...prev,
+                                general_description: prev.general_description.filter((_,i) => i !== index)
+                            }));
+                        }}
+                        onAdd={(newItem: string) => {
+                            setEimeria((prev) => ({
+                              ...prev,
+                              general_description: [...prev.general_description, newItem]
+                            }));
+                          }}/>
+                    </div>
+                    
+                    {/* Campo Local de Ação */}
+                    <div className="grid grid-cols-1 col-span-4 gap-3">
+                        <DynamicListInput title="Local de ação" 
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Cursor-Target-1--Streamline-Ultimate" height="24" width="24"><desc>Cursor Target 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M12.002 17.2471v6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M12.002 0.74707v6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M6.75201 11.9971H0.752014" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M23.252 11.9971h-6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M3.75201 11.998c0 1.0835 0.2134 2.1562 0.628 3.1572 0.4146 1.0009 1.02229 1.9104 1.78837 2.6765 0.76609 0.7661 1.67556 1.3738 2.6765 1.7884 1.00093 0.4146 2.07372 0.6279 3.15712 0.6279 1.0834 0 2.1562 -0.2133 3.1572 -0.6279 1.0009 -0.4146 1.9104 -1.0223 2.6764 -1.7884 0.7661 -0.7661 1.3738 -1.6756 1.7884 -2.6765 0.4146 -1.001 0.628 -2.0737 0.628 -3.1572 0 -1.0834 -0.2134 -2.15616 -0.628 -3.15709 -0.4146 -1.00094 -1.0223 -1.91041 -1.7884 -2.67649 -0.766 -0.76609 -1.6755 -1.37378 -2.6764 -1.78838 -1.001 -0.4146 -2.0738 -0.62799 -3.1572 -0.62799 -1.0834 0 -2.15619 0.21339 -3.15712 0.62799 -1.00094 0.4146 -1.91041 1.02229 -2.6765 1.78838 -0.76608 0.76608 -1.37377 1.67555 -1.78837 2.67649 -0.4146 1.00093 -0.628 2.07369 -0.628 3.15709Z" stroke-width="1.5"></path></svg>} 
+                            placeholder="Descrição" 
+                            list={eimeria.place_of_action} 
+                            onRemove={(index: number) => {
+                                setEimeria((prev) => ({
+                                    ...prev,
+                                    place_of_action: prev.place_of_action.filter((_,i) => i !== index)
+                                }));
+                            }}
+                            onAdd={(newItem: string) => {
+                                setEimeria((prev) => ({
+                                  ...prev,
+                                  place_of_action: [...prev.place_of_action, newItem]
+                                }));
+                              }}/>
+                    </div>
+
+                    {/* Campo Sinais clínicos */}
+                    <div className="grid grid-cols-1 col-span-4 gap-3">
+                        <DynamicListInput title="Sinais clínicos e sinais macroscópicos" 
+                            icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Add-Circle-Bold--Streamline-Ultimate" height="24" width="24"><desc>Add Circle Bold Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 12c0 2.9837 1.18526 5.8452 3.29505 7.955C6.15483 22.0647 9.01631 23.25 12 23.25c2.9837 0 5.8452 -1.1853 7.955 -3.295 2.1097 -2.1098 3.295 -4.9713 3.295 -7.955 0 -2.98369 -1.1853 -5.84517 -3.295 -7.95495C17.8452 1.93526 14.9837 0.75 12 0.75c-2.98369 0 -5.84517 1.18526 -7.95495 3.29505C1.93526 6.15483 0.75 9.01631 0.75 12Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75h-3v-3c0 -0.39782 -0.158 -0.77936 -0.4393 -1.06066 -0.2813 -0.2813 -0.6629 -0.43934 -1.0607 -0.43934h-1.5c-0.3978 0 -0.7794 0.15804 -1.0607 0.43934 -0.28126 0.2813 -0.4393 0.66284 -0.4393 1.06066v3h-3c-0.39782 0 -0.77936 0.15804 -1.06066 0.4393 -0.2813 0.2813 -0.43934 0.6629 -0.43934 1.0607v1.5c0 0.3978 0.15804 0.7794 0.43934 1.0607s0.66284 0.4393 1.06066 0.4393h3v3c0 0.3978 0.15804 0.7794 0.4393 1.0607 0.2813 0.2813 0.6629 0.4393 1.0607 0.4393h1.5c0.3978 0 0.7794 -0.158 1.0607 -0.4393s0.4393 -0.6629 0.4393 -1.0607v-3h3c0.3978 0 0.7794 -0.158 1.0607 -0.4393s0.4393 -0.6629 0.4393 -1.0607v-1.5c0 -0.3978 -0.158 -0.7794 -0.4393 -1.0607 -0.2813 -0.28126 -0.6629 -0.4393 -1.0607 -0.4393Z" stroke-width="1.5"></path></svg>} 
+                            placeholder="Descrição" 
+                            list={eimeria.clinical_signs} 
+                            onRemove={(index: number) => {
+                                setEimeria((prev) => ({
+                                    ...prev,
+                                    clinical_signs: prev.clinical_signs.filter((_,i) => i !== index)
+                                }));
+                            }}
+                            onAdd={(newItem: string) => {
+                                setEimeria((prev) => ({
+                                  ...prev,
+                                  clinical_signs: [...prev.clinical_signs, newItem]
+                                }));
+                              }}/>
+                    </div>
+
+                    {/* Campo Score */}
+                    <div className="grid grid-cols-1 col-span-4 gap-3">
                         <div className="flex gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Task-List-Approve--Streamline-Ultimate" height="24" width="24"><desc>Task List Approve Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 14.2612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 18.7612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 9.76123h5.25" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c-0.20711 0 -0.375 -0.16787 -0.375 -0.37497 0 -0.20711 0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c0.20711 0 0.375 -0.16787 0.375 -0.37497 0 -0.20711 -0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M15.75 4.5h3.75c0.3978 0 0.7794 0.15804 1.0607 0.43934S21 5.60218 21 6v15.75c0 0.3978 -0.158 0.7794 -0.4393 1.0607s-0.6629 0.4393 -1.0607 0.4393h-15c-0.39782 0 -0.77936 -0.158 -1.06066 -0.4393C3.15804 22.5294 3 22.1478 3 21.75V6c0 -0.39782 0.15804 -0.77936 0.43934 -1.06066C3.72064 4.65804 4.10218 4.5 4.5 4.5h3.75c0 -0.99456 0.39509 -1.94839 1.09835 -2.65165C10.0516 1.14509 11.0054 0.75 12 0.75c0.9946 0 1.9484 0.39509 2.6517 1.09835C15.3549 2.55161 15.75 3.50544 15.75 4.5Z" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c-0.2071 0 -0.375 -0.1679 -0.375 -0.375 0 -0.20711 0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c0.2071 0 0.375 -0.1679 0.375 -0.375 0 -0.20711 -0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path></svg>
-                            Desrição geral:
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Tags-1--Streamline-Ultimate" height="24" width="24"><desc>Tags 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M1.13501 2.63403v6.258c0.00017 0.79559 0.31635 1.55857 0.879 2.12097L13.644 22.643c0.096 0.0961 0.2162 0.1643 0.3479 0.1974 0.1317 0.033 0.2699 0.0297 0.3999 -0.0096 0.1299 -0.0393 0.2468 -0.1132 0.338 -0.2137 0.0913 -0.1005 0.1536 -0.2239 0.1802 -0.3571l1.225 -6.126 6.126 -1.225c0.1331 -0.0266 0.2566 -0.0889 0.3571 -0.1801 0.1005 -0.0913 0.1744 -0.2082 0.2137 -0.3381 0.0393 -0.13 0.0426 -0.2682 0.0095 -0.3999 -0.033 -0.1317 -0.1012 -0.2519 -0.1973 -0.3479L11.014 2.01303c-0.5625 -0.56264 -1.32541 -0.87883 -2.12099 -0.879h-6.258c-0.39782 0 -0.77936 0.15804 -1.06066 0.43934 -0.2813 0.28131 -0.43934 0.66284 -0.43934 1.06066Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M4.88501 6.38403c0 0.19699 0.0388 0.39204 0.11418 0.57403 0.07538 0.18199 0.18587 0.34735 0.32516 0.48663 0.13929 0.13929 0.30465 0.24978 0.48663 0.32516 0.18199 0.07538 0.37705 0.11418 0.57403 0.11418 0.19698 0 0.39204 -0.0388 0.57402 -0.11418 0.18199 -0.07538 0.34735 -0.18587 0.48664 -0.32516 0.13929 -0.13928 0.24978 -0.30464 0.32516 -0.48663 0.07538 -0.18199 0.11418 -0.37704 0.11418 -0.57403 0 -0.19698 -0.0388 -0.39203 -0.11418 -0.57402 -0.07538 -0.18199 -0.18587 -0.34735 -0.32516 -0.48664 -0.13929 -0.13928 -0.30465 -0.24977 -0.48664 -0.32516 -0.18198 -0.07538 -0.37704 -0.11418 -0.57402 -0.11418s-0.39204 0.0388 -0.57403 0.11418c-0.18198 0.07539 -0.34734 0.18588 -0.48663 0.32516 -0.13929 0.13929 -0.24978 0.30465 -0.32516 0.48664 -0.07538 0.18199 -0.11418 0.37704 -0.11418 0.57402Z" stroke-width="1.5"></path></svg>
+                           Score:
                         </div>
-                        <div className="bg-mygray-300 p-2 rounded-[8px]">
-                            <div className="bg-white rounded-[8px] p-2">
-                                <input className="bg-mygray-300 rounded-l-[8px] pl-2 h-[31px] w-[230px] border-[1px] border-black" type="text" placeholder="Espécie" />
-                                <button className="bg-mygray-900 text-white font-bold h-[31px] w-[100px] px-4 rounded-r-[8px]">BUSCAR</button>
-                                <div className="h-[40svh] mt-5 overflow-y-auto w-[100%]">
+                        <div className="bg-mygray-300 p-2 rounded-[8px] border-[2px] border-mygray-500">
+                            <div className="flex w-[100%] gap-1 mb-2">
+                                <input className="rounded-[8px] pl-2 h-[35px] w-[45%] border-[2px] border-mygray-500" type="text" placeholder="Nível"/>
+                                <button className="w-[45%] h-[35px] rounded-[8px] border-[2px] border-mygray-500 bg-mygray-200 font-bold hover:bg-white">SELECIONAR IMAGEM</button>
+                                <button onClick={() => setIsOpen(true)} type="button" className="bg-mygray-900 flex items-center justify-center h-[35px] w-[10%] rounded-[8px] hover:bg-mygray-600">
+                                    <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
+                                </button>
+                            </div>
+                            <div className="bg-white rounded-[8px] border-[2px] border-mygray-500 p-1">
+                                <div className="min-h-[50px] max-h-[200px] overflow-y-auto w-[100%]">
                                     <ul>
                                         <li className="p-2 border-b flex capitalize items-center justify-between">
                                             Ola
                                             <div className="flex items-center gap-2 *:p-1">
                                                 <button className="hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Pencil-1--Streamline-Ultimate" height="24" width="24"><desc>Pencil 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.19 1.81002c-0.3406 -0.33916 -0.7449 -0.60748 -1.1898 -0.78945 -0.4449 -0.181969 -0.9214 -0.273985 -1.402 -0.270731 -0.4806 0.003255 -0.9558 0.101715 -1.3982 0.289691 -0.4423 0.18798 -0.8431 0.46175 -1.179 0.80549L2.521 16.345 0.75 23.25l6.905 -1.771 14.5 -14.49998c0.3437 -0.33593 0.6175 -0.73665 0.8055 -1.17901 0.188 -0.44235 0.2864 -0.91756 0.2897 -1.39819 0.0032 -0.48063 -0.0888 -0.95713 -0.2707 -1.40199 -0.182 -0.44486 -0.4503 -0.84925 -0.7895 -1.18981Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m16.606 2.26001 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.512 4.354 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m2.521 16.345 5.139 5.129" stroke-width="1.5"></path></svg>
-                                                </button>
-                                                <button className="hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Search-Circle--Streamline-Ultimate" height="24" width="24"><desc>Search Circle Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 12c0 2.9837 1.18526 5.8452 3.29505 7.955C6.15483 22.0647 9.01631 23.25 12 23.25c2.9837 0 5.8452 -1.1853 7.955 -3.295 2.1097 -2.1098 3.295 -4.9713 3.295 -7.955 0 -2.98369 -1.1853 -5.84517 -3.295 -7.95495C17.8452 1.93526 14.9837 0.75 12 0.75c-2.98369 0 -5.84517 1.18526 -7.95495 3.29505C1.93526 6.15483 0.75 9.01631 0.75 12Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M6.75 11.125c0 1.1603 0.46094 2.2731 1.28141 3.0936 0.82047 0.8205 1.93327 1.2814 3.09359 1.2814 1.1603 0 2.2731 -0.4609 3.0936 -1.2814 0.8205 -0.8205 1.2814 -1.9333 1.2814 -3.0936 0 -1.16032 -0.4609 -2.27312 -1.2814 -3.09359C13.3981 7.21094 12.2853 6.75 11.125 6.75c-1.16032 0 -2.27312 0.46094 -3.09359 1.28141C7.21094 8.85188 6.75 9.96468 6.75 11.125Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.219 14.218 3.031 3.032" stroke-width="1.5"></path></svg>
+                                                    <svg width="25" height="25" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <g clip-path="url(#clip0_100_271)">
+                                                        <path d="M0.833252 4.1665H19.1666" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M11.875 0.833496H8.125C7.79348 0.833496 7.47553 0.965196 7.24112 1.19961C7.0067 1.43403 6.875 1.75198 6.875 2.0835V4.16683H13.125V2.0835C13.125 1.75198 12.9933 1.43403 12.7589 1.19961C12.5245 0.965196 12.2065 0.833496 11.875 0.833496Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M8.125 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M11.875 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M15.7167 18.0165C15.6935 18.3297 15.5525 18.6224 15.3221 18.8358C15.0917 19.0492 14.789 19.1673 14.475 19.1665H5.525C5.21098 19.1673 4.90828 19.0492 4.67789 18.8358C4.4475 18.6224 4.30652 18.3297 4.28333 18.0165L3.125 4.1665H16.875L15.7167 18.0165Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </g>
+                                                        <defs>
+                                                        <clipPath id="clip0_100_271">
+                                                        <rect width="20" height="20" fill="white"/>
+                                                        </clipPath>
+                                                        </defs>
+                                                    </svg>
                                                 </button>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
-                            <div className="flex justify-end mt-2">
-                                <Link to={'/nova-eimeria'} className="border-[1px] flex gap-2 border-black rounded-[8px] py-2 px-4 font-bold hover:bg-white">
-                                    CADASTRAR 
-                                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13.5 1C13.5 0.447715 13.0523 0 12.5 0C11.9477 0 11.5 0.447715 11.5 1H13.5ZM11.5 22.2789C11.5 22.8312 11.9477 23.2789 12.5 23.2789C13.0523 23.2789 13.5 22.8312 13.5 22.2789H11.5ZM1 10.6395C0.447715 10.6395 0 11.0872 0 11.6395C0 12.1917 0.447715 12.6395 1 12.6395V10.6395ZM24 12.6395C24.5523 12.6395 25 12.1917 25 11.6395C25 11.0872 24.5523 10.6395 24 10.6395V12.6395ZM11.5 1V11.6395H13.5V1H11.5ZM11.5 11.6395V22.2789H13.5V11.6395H11.5ZM12.5 10.6395H1V12.6395H12.5V10.6395ZM1 12.6395H23.2581V10.6395H1V12.6395ZM23.2581 12.6395H23.629V10.6395H23.2581V12.6395ZM23.629 12.6395H24V10.6395H23.629V12.6395Z" fill="black"/>
-                                    </svg>
-                                </Link>
-                            </div>
                         </div>
                     </div>
+
+                    <div className="col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
+                        <button className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">CANCELAR</button>
+                        <button className="bg-black rounded-[8px] text-white hover:bg-mygray-600">CADASTRAR</button>
+                    </div>
+
+                    {/* Modal */}
+                    {isOpen && (
+                        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-[8px] w-[50%] h-[50%]">
+                                    <div className="flex justify-between h-[10%] mb-3">
+                                        <div className="font-bold text-[18px] flex justify-center items-center w-[90%]">
+                                            <strong className="text-mygray-600 mr-1">SCORE {">"}</strong>INFORMAÇÕES ADICIONAIS
+                                        </div>
+                                        <button>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div className="bg-mygray-300 p-2 h-[70%] rounded-[8px] border-[2px] border-mygray-500">
+                                        <div className="flex w-[100%] gap-1 mb-1">
+                                            <input className="rounded-[8px] pl-2 h-[35px] w-[90%] border-[2px] border-mygray-500" type="text" placeholder="Descrição" />
+                                            <button className="bg-mygray-900 flex items-center justify-center h-[35px] w-[10%] rounded-[8px] hover:bg-mygray-600">
+                                                <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
+                                            </button>
+                                        </div>
+                                        <div className="bg-white h-[80%] rounded-[8px] border-[2px] border-mygray-500 p-1">
+                                            <div className="h-[100%] overflow-y-auto w-[100%]">
+                                                <ul>
+                                                    <li className="p-2 border-b flex capitalize items-center justify-between">
+                                                        Ola
+                                                        <div className="flex items-center gap-2 *:p-1">
+                                                            <button className="hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]">
+                                                                <svg width="25" height="25" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <g clip-path="url(#clip0_100_271)">
+                                                                    <path d="M0.833252 4.1665H19.1666" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                    <path d="M11.875 0.833496H8.125C7.79348 0.833496 7.47553 0.965196 7.24112 1.19961C7.0067 1.43403 6.875 1.75198 6.875 2.0835V4.16683H13.125V2.0835C13.125 1.75198 12.9933 1.43403 12.7589 1.19961C12.5245 0.965196 12.2065 0.833496 11.875 0.833496Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                    <path d="M8.125 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                    <path d="M11.875 14.7915V8.5415" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                    <path d="M15.7167 18.0165C15.6935 18.3297 15.5525 18.6224 15.3221 18.8358C15.0917 19.0492 14.789 19.1673 14.475 19.1665H5.525C5.21098 19.1673 4.90828 19.0492 4.67789 18.8358C4.4475 18.6224 4.30652 18.3297 4.28333 18.0165L3.125 4.1665H16.875L15.7167 18.0165Z" stroke="#BE0000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                                    </g>
+                                                                    <defs>
+                                                                    <clipPath id="clip0_100_271">
+                                                                    <rect width="20" height="20" fill="white"/>
+                                                                    </clipPath>
+                                                                    </defs>
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="h-[20%] flex justify-end items-center gap-4 *:font-bold *:py-1 *:px-10">
+                                        <button onClick={() => setIsOpen(false)} className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">CANCELAR</button>
+                                        <button type="button" onClick={() => setIsOpen(false)} className="border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">ADICIONAR</button>
+                                    </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 </form>
             </div>        
