@@ -44,7 +44,7 @@ export function DynamicListInput(props:DynamicListInputProps) {
             <div className="bg-white rounded-[8px] border-[2px] border-mygray-500 p-1">
                 <div className="min-h-[50px] max-h-[200px] overflow-y-auto w-[100%]">
                         { props.list.length === 0 ? (
-                            <p className="text-center text-gray-500 p-2">Nenhuma descrição disponível.</p>
+                            <p className="text-center text-gray-500 p-2 mt-1">Nenhuma descrição disponível.</p>
                         ): (
                             <ul>
                                 {props.list.map((desc, index) => (
