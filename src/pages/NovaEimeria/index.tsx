@@ -5,8 +5,8 @@ import './NovaEimeria.css';
 import { ScoreInput } from "../../components/ScoreInput";
 
 interface Iscore {
-    level: number,
-    img: string | File,
+    level: number | string,
+    img: string | File | null,
     description: Array<string>
 }
 
@@ -29,12 +29,7 @@ export function NovaEimeria(){
         name: '',
         img_local: '',
         category: '',
-        general_description: [
-            'Aves tristes (prostradas)',
-            'Penas arrepiadas',
-            'Baixo consumo de ração e água',
-            'Aumento da mortalidade'
-        ],
+        general_description: [],
         place_of_action: [],
         clinical_signs: [],
         score: []
@@ -156,6 +151,18 @@ export function NovaEimeria(){
                                 score: [...prev.score, newScore]
                             }))
                         }} 
+                        onEdit={(index:number, score:Iscore) => {
+                            setEimeria((prev) => ({
+                                ...prev,
+                                score: prev.score.map((e,i) => {
+                                    if (i === index) {
+                                        return score
+                                    } else {
+                                        return e
+                                    }
+                                } )
+                            }))
+                        }}
                         onRemove={(index: number) => {
                             setEimeria((prev) => ({
                                 ...prev,
