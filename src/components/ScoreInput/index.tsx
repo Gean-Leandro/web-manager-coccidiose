@@ -110,11 +110,12 @@ export function ScoreInput(props:ScoreInputProps) {
 
     const editDescriptionSave = () => {
         if (editDescriptionIndex !== null) {
-            if (description[editDescriptionIndex] !== newDescription){
+            if (description[editDescriptionIndex] !== newDescription.trim()){
                 const updateDescription = [...description];
-                updateDescription[editDescriptionIndex] = newDescription;
+                updateDescription[editDescriptionIndex] = newDescription.trim();
                 setDescription(updateDescription);
                 setEditDescriptionIndex(null);
+                setNewDescription("");
                 setShowNotification({
                     active: true,
                     mensage: "Descrição atualizada",
@@ -163,8 +164,8 @@ export function ScoreInput(props:ScoreInputProps) {
     }
 
     const addNewDescriptionButton = () => {
-        if (newDescription !== "") {
-            setDescription([...description, newDescription]);
+        if (newDescription.trim() !== "") {
+            setDescription([...description, newDescription.trim()]);
             setNewDescription("");
         } else {
             setShowNotification({
@@ -414,7 +415,9 @@ export function ScoreInput(props:ScoreInputProps) {
                                     <ul>
                                         {description.map((desc, index) => (
                                             <li className="p-2 border-b flex first-letter:uppercase items-center justify-between">
-                                                {desc}
+                                                <div className="w-[85%] break-words">
+                                                    {desc}
+                                                </div>
                                                 <div className="flex items-center gap-2 *:p-1">
                                                     {/* Botão de edição */}
                                                     <button onClick={() => editDescriptionActivate(index, desc)}

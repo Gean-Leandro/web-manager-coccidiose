@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { DynamicListInput } from "../../components/DynamicListInput";
 import './NovaEimeria.css';
+import { Notification } from "../../components/Notification";
 import { ScoreInput } from "../../components/ScoreInput";
 
 interface Iscore {
@@ -35,8 +36,50 @@ export function NovaEimeria(){
         score: []
     });
 
+    const [name, setName] = useState<string>("");
+    const [category, setCategory] = useState<string>("");
+    const [image, setImage] = useState<string>("");
+    const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
+        {active:false, mensage:"", bgColor:""}
+    );
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCategory(e.target.value);
+    };
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+            const imageUrl = URL.createObjectURL(file); // Pré-visualização local da imagem
+            setImage(imageUrl);
+        } else {
+            setShowNotification({
+                active: true,
+                mensage: "Por favor, selecione uma imagem JPG ou PNG.",
+                bgColor: "bg-orange-500"
+            });
+        }
+    };
+
+    const addNewEimeria = () => {
+        if (category !== ""){
+            setName(category);
+        } else {
+            setName(`Categoria não selecionada`);
+        }
+    } 
+
     return(
         <>
+        {showNotification.active && (
+            <Notification
+            message={showNotification.mensage}
+            bgColor={showNotification.bgColor}
+            onClose={() => setShowNotification({active: false, mensage:"", bgColor:""})}
+            />
+        )}
+
         <div className="grid grid-cols-[250px_1fr] h-screen">
             <Sidebar/>
             <div className="px-[15svh] overflow-y-auto">
@@ -48,17 +91,36 @@ export function NovaEimeria(){
                     {/* Campo Nome */}
                     <div className="flex items-center col-span-4 gap-3">
                         Nome:
-                        <input name="name" className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
+                        <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)} 
+                        className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
                     </div>
 
                     {/* Campo Imagem */}
                     <div className="flex items-center col-span-4 gap-3">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Picture-Double-Landscape--Streamline-Ultimate" height="24" width="24"><desc>Picture Double Landscape Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.75 5.25v-0.978c0.0015 -0.26409 -0.0491 -0.52588 -0.1488 -0.77042 -0.0998 -0.24454 -0.2467 -0.46704 -0.4324 -0.6548 -0.1857 -0.18776 -0.4066 -0.3371 -0.65 -0.4395 -0.2435 -0.1024 -0.5047 -0.15584 -0.7688 -0.15728H2.75003c-0.26409 0.00144 -0.52531 0.05488 -0.76874 0.15728 -0.24344 0.1024 -0.46432 0.25174 -0.65004 0.4395 -0.18572 0.18776 -0.332633 0.41026 -0.432359 0.6548 -0.099726 0.24454 -0.150309 0.50633 -0.148861 0.77042v9.456c-0.001448 0.2641 0.049135 0.5259 0.148861 0.7704 0.099726 0.2446 0.246639 0.4671 0.432359 0.6548 0.18572 0.1878 0.4066 0.3371 0.65004 0.4395 0.24343 0.1024 0.50465 0.1559 0.76874 0.1573" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m11.339 21.7499 4.439 -6.307c0.1304 -0.1863 0.3015 -0.3404 0.5003 -0.4508 0.1987 -0.1105 0.42 -0.1743 0.6471 -0.1866 0.227 -0.0123 0.4539 0.0271 0.6634 0.1154 0.2096 0.0882 0.3964 0.223 0.5462 0.394l4.938 5.643" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c-0.2071 0 -0.375 -0.1679 -0.375 -0.375s0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c0.2071 0 0.375 -0.1679 0.375 -0.375s-0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.25 8.25H7c-0.55228 0 -1 0.44772 -1 1v11.5c0 0.5523 0.44772 1 1 1h15.25c0.5523 0 1 -0.4477 1 -1V9.25c0 -0.55228 -0.4477 -1 -1 -1Z" stroke-width="1.5"></path></svg>
                         Imagem da área de lesão:
-                        <button className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 
-                        rounded-[8px] font-bold px-8 hover:bg-mygray-400">
-                            SELECIONAR
+                        <button 
+                            onClick={() => fileInputRef.current?.click()}
+                            type="button" 
+                            className={`h-[45px] ${image !== "" ? "bg-green-500" : "bg-mygray-200"} border-[2px] border-mygray-500 rounded-[8px] font-bold px-8 hover:bg-mygray-400`}>
+                            {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
                         </button>
+                        <button
+                            onClick={() => setImage("")} 
+                            type="button"
+                            className={`${image === ""? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px] p-2`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={handleFileChange}
+                        className="hidden"/>
                     </div>
 
                     {/* Campo Categoria */}
@@ -67,16 +129,31 @@ export function NovaEimeria(){
                         Categoria:
                         <div className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 flex items-center *:items-center rounded-[8px] px-2 gap-8">
                             <label className="flex gap-2">
-                                <input type="radio" name="Principais espécies" value={'Principais espécies'}/>
+                                <input 
+                                    onChange={handleChange}
+                                    checked={category === "Principais espécies"}
+                                    type="radio" 
+                                    name="category" 
+                                    value={'Principais espécies'}/>
                                 Principais espécies
                             </label>
                             <label className="flex gap-2">
-                                <input type="radio" name="Principais espécies" value={'Principais espécies'}/>
-                                Principais espécies
+                                <input 
+                                    onChange={handleChange}
+                                    checked={category === "Espécies menos frequentes"}
+                                    type="radio" 
+                                    name="category" 
+                                    value={'Espécies menos frequentes'}/>
+                                Espécies menos frequentes
                             </label>
                             <label className="flex gap-2">
-                                <input type="radio" name="Principais espécies" value={'Principais espécies'}/>
-                                Principais espécies
+                                <input 
+                                    onChange={handleChange}
+                                    checked={category === "Espécies menos patogênicas"}
+                                    type="radio" 
+                                    name="category" 
+                                    value={'Espécies menos patogênicas'}/>
+                                Espécies menos patogênicas
                             </label>
                         </div>
                     </div>
@@ -220,8 +297,8 @@ export function NovaEimeria(){
                     </div>
 
                     <div className="col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
-                        <button className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">CANCELAR</button>
-                        <button className="bg-black rounded-[8px] text-white hover:bg-mygray-600">CADASTRAR</button>
+                        <button type="button" className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">CANCELAR</button>
+                        <button onClick={addNewEimeria} type="button" className="bg-black rounded-[8px] text-white hover:bg-mygray-600">CADASTRAR</button>
                     </div>
                 </div>
                 </form>

@@ -121,7 +121,9 @@ export function DynamicListInput(props:DynamicListInputProps) {
                             <ul>
                                 {props.list.map((desc, index) => (
                                     <li className="p-2 border-b flex first-letter:uppercase items-center justify-between">
-                                        {capitalizeFirstLetter(desc)}
+                                        <div className="w-[85%] break-words">
+                                            {capitalizeFirstLetter(desc)}
+                                        </div>
                                         <div className="flex items-center gap-2 *:p-1">
                                             {/* Botão de edição */}
                                             <button onClick={() => editDescriptionActivate(index, desc)}
