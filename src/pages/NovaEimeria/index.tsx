@@ -6,7 +6,7 @@ import { ScoreInput } from "../../components/ScoreInput";
 
 interface Iscore {
     level: number | string,
-    img: string | File | null,
+    img: string,
     description: Array<string>
 }
 
@@ -86,8 +86,24 @@ export function NovaEimeria(){
                     <div className="grid grid-cols-1 col-span-4 gap-3">
                         <DynamicListInput title="Descrição geral" 
                         icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Task-List-Approve--Streamline-Ultimate" height="24" width="24"><desc>Task List Approve Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 14.2612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 18.7612h5.25" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M11.25 9.76123h5.25" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 14.6362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c-0.20711 0 -0.375 -0.1679 -0.375 -0.375s0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 19.1362c0.20711 0 0.375 -0.1679 0.375 -0.375s-0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c-0.20711 0 -0.375 -0.16787 -0.375 -0.37497 0 -0.20711 0.16789 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M8.25 10.1362c0.20711 0 0.375 -0.16787 0.375 -0.37497 0 -0.20711 -0.16789 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M15.75 4.5h3.75c0.3978 0 0.7794 0.15804 1.0607 0.43934S21 5.60218 21 6v15.75c0 0.3978 -0.158 0.7794 -0.4393 1.0607s-0.6629 0.4393 -1.0607 0.4393h-15c-0.39782 0 -0.77936 -0.158 -1.06066 -0.4393C3.15804 22.5294 3 22.1478 3 21.75V6c0 -0.39782 0.15804 -0.77936 0.43934 -1.06066C3.72064 4.65804 4.10218 4.5 4.5 4.5h3.75c0 -0.99456 0.39509 -1.94839 1.09835 -2.65165C10.0516 1.14509 11.0054 0.75 12 0.75c0.9946 0 1.9484 0.39509 2.6517 1.09835C15.3549 2.55161 15.75 3.50544 15.75 4.5Z" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c-0.2071 0 -0.375 -0.1679 -0.375 -0.375 0 -0.20711 0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M12 4.51123c0.2071 0 0.375 -0.1679 0.375 -0.375 0 -0.20711 -0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path></svg>} 
-                        placeholder="Descrição" 
+                        placeholder="Descrição"
+                        textEmptyReport="Nenhuma descrição disponível" 
                         list={eimeria.general_description} 
+                        onEdit={(index:number|null, newDescription:string):boolean => {
+                            if (index !== null) {
+                                const description = newDescription.trim()
+                                if (eimeria.general_description[index] !== description){
+                                    const updateDescription = [...eimeria.general_description];
+                                    updateDescription[index] = newDescription;
+                                    setEimeria((prev) => ({
+                                        ...prev,
+                                        general_description: updateDescription
+                                    }))
+                                    return true;
+                                }
+                            }
+                            return false
+                        }}
                         onRemove={(index: number) => {
                             setEimeria((prev) => ({
                                 ...prev,
@@ -106,8 +122,24 @@ export function NovaEimeria(){
                     <div className="grid grid-cols-1 col-span-4 gap-3">
                         <DynamicListInput title="Local de ação" 
                             icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Cursor-Target-1--Streamline-Ultimate" height="24" width="24"><desc>Cursor Target 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M12.002 17.2471v6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M12.002 0.74707v6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M6.75201 11.9971H0.752014" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M23.252 11.9971h-6" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M3.75201 11.998c0 1.0835 0.2134 2.1562 0.628 3.1572 0.4146 1.0009 1.02229 1.9104 1.78837 2.6765 0.76609 0.7661 1.67556 1.3738 2.6765 1.7884 1.00093 0.4146 2.07372 0.6279 3.15712 0.6279 1.0834 0 2.1562 -0.2133 3.1572 -0.6279 1.0009 -0.4146 1.9104 -1.0223 2.6764 -1.7884 0.7661 -0.7661 1.3738 -1.6756 1.7884 -2.6765 0.4146 -1.001 0.628 -2.0737 0.628 -3.1572 0 -1.0834 -0.2134 -2.15616 -0.628 -3.15709 -0.4146 -1.00094 -1.0223 -1.91041 -1.7884 -2.67649 -0.766 -0.76609 -1.6755 -1.37378 -2.6764 -1.78838 -1.001 -0.4146 -2.0738 -0.62799 -3.1572 -0.62799 -1.0834 0 -2.15619 0.21339 -3.15712 0.62799 -1.00094 0.4146 -1.91041 1.02229 -2.6765 1.78838 -0.76608 0.76608 -1.37377 1.67555 -1.78837 2.67649 -0.4146 1.00093 -0.628 2.07369 -0.628 3.15709Z" stroke-width="1.5"></path></svg>} 
-                            placeholder="Descrição" 
+                            placeholder="Local"
+                            textEmptyReport="Nenhum local de ação disponível"  
                             list={eimeria.place_of_action} 
+                            onEdit={(index:number|null, newDescription:string):boolean => {
+                                if (index !== null) {
+                                    const description = newDescription.trim()
+                                    if (eimeria.place_of_action[index] !== description){
+                                        const updateDescription = [...eimeria.place_of_action];
+                                        updateDescription[index] = newDescription;
+                                        setEimeria((prev) => ({
+                                            ...prev,
+                                            place_of_action: updateDescription
+                                        }))
+                                        return true;
+                                    }
+                                }
+                                return false
+                            }}
                             onRemove={(index: number) => {
                                 setEimeria((prev) => ({
                                     ...prev,
@@ -126,8 +158,24 @@ export function NovaEimeria(){
                     <div className="grid grid-cols-1 col-span-4 gap-3">
                         <DynamicListInput title="Sinais clínicos e sinais macroscópicos" 
                             icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Add-Circle-Bold--Streamline-Ultimate" height="24" width="24"><desc>Add Circle Bold Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M0.75 12c0 2.9837 1.18526 5.8452 3.29505 7.955C6.15483 22.0647 9.01631 23.25 12 23.25c2.9837 0 5.8452 -1.1853 7.955 -3.295 2.1097 -2.1098 3.295 -4.9713 3.295 -7.955 0 -2.98369 -1.1853 -5.84517 -3.295 -7.95495C17.8452 1.93526 14.9837 0.75 12 0.75c-2.98369 0 -5.84517 1.18526 -7.95495 3.29505C1.93526 6.15483 0.75 9.01631 0.75 12Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75h-3v-3c0 -0.39782 -0.158 -0.77936 -0.4393 -1.06066 -0.2813 -0.2813 -0.6629 -0.43934 -1.0607 -0.43934h-1.5c-0.3978 0 -0.7794 0.15804 -1.0607 0.43934 -0.28126 0.2813 -0.4393 0.66284 -0.4393 1.06066v3h-3c-0.39782 0 -0.77936 0.15804 -1.06066 0.4393 -0.2813 0.2813 -0.43934 0.6629 -0.43934 1.0607v1.5c0 0.3978 0.15804 0.7794 0.43934 1.0607s0.66284 0.4393 1.06066 0.4393h3v3c0 0.3978 0.15804 0.7794 0.4393 1.0607 0.2813 0.2813 0.6629 0.4393 1.0607 0.4393h1.5c0.3978 0 0.7794 -0.158 1.0607 -0.4393s0.4393 -0.6629 0.4393 -1.0607v-3h3c0.3978 0 0.7794 -0.158 1.0607 -0.4393s0.4393 -0.6629 0.4393 -1.0607v-1.5c0 -0.3978 -0.158 -0.7794 -0.4393 -1.0607 -0.2813 -0.28126 -0.6629 -0.4393 -1.0607 -0.4393Z" stroke-width="1.5"></path></svg>} 
-                            placeholder="Descrição" 
+                            placeholder="Sinais" 
+                            textEmptyReport="Nenhum sinal disponível" 
                             list={eimeria.clinical_signs} 
+                            onEdit={(index:number|null, newDescription:string):boolean => {
+                                if (index !== null) {
+                                    const description = newDescription.trim()
+                                    if (eimeria.clinical_signs[index] !== description){
+                                        const updateDescription = [...eimeria.clinical_signs];
+                                        updateDescription[index] = newDescription;
+                                        setEimeria((prev) => ({
+                                            ...prev,
+                                            clinical_signs: updateDescription
+                                        }))
+                                        return true;
+                                    }
+                                }
+                                return false
+                            }}
                             onRemove={(index: number) => {
                                 setEimeria((prev) => ({
                                     ...prev,

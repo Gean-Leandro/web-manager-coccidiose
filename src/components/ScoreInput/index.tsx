@@ -3,7 +3,7 @@ import { Notification } from "../Notification";
 
 interface Iscore {
     level: number | string,
-    img: string | File | null,
+    img: string,
     description: Array<string>
 }
 
@@ -18,13 +18,14 @@ export function ScoreInput(props:ScoreInputProps) {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
+    const [imageModal, setImageModal] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [level, setLevel] = useState<number | string>("");
     const [description, setDescription] = useState<Array<string>>([]);
     const [newDescription, setNewDescription] = useState<string>("");
     const [editDescriptionIndex, setEditDescriptionIndex] = useState<number | null>(null);
     const [editScoreIndex, setEditScoreIndex] = useState<number | null>(null);
-    const [image, setImage] = useState<File | null | string>(null);
+    const [image, setImage] = useState<string>("");
     const [alertLevel, setAlertLevel] = useState<boolean>(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -44,27 +45,21 @@ export function ScoreInput(props:ScoreInputProps) {
 
     const editScoreSave = () => {
         if (editScoreIndex !== null) {
-            if (props.list[editScoreIndex].level !== level){
-                const editScore:Iscore = {
-                    level: level, 
-                    img:image, 
-                    description:props.list[editScoreIndex].description
-                };
+            const editScore:Iscore = {
+                level: level, 
+                img:image, 
+                description:props.list[editScoreIndex].description
+            };
 
-                props.onEdit(editScoreIndex, editScore);
-                setEditScoreIndex(null);
-                setShowNotification({
-                    active: true,
-                    mensage: "Score atualizado",
-                    bgColor: "bg-green-600"
-                });
-            } else {
-                setShowNotification({
-                    active: true,
-                    mensage: "Nível é idêntico ao anterior, ação cancelada",
-                    bgColor: "bg-orange-500"
-                });
-            }
+            props.onEdit(editScoreIndex, editScore);
+            setEditScoreIndex(null);
+            setImage("");
+            setLevel("");
+            setShowNotification({
+                active: true,
+                mensage: "Score atualizado",
+                bgColor: "bg-green-600"
+            });
         }
     }
 
@@ -139,23 +134,32 @@ export function ScoreInput(props:ScoreInputProps) {
         setNewDescription("");
         setLevel("");
         setDescription([]);
+        setImage("");
         setEditScoreIndex(null);
         setIsOpen(false);
         setEditDescriptionIndex(null);
     }
 
     const addNewScoreButton = () => {
-        setNewDescription("");
-        props.onAdd({level: level, img: image, description: description});
-        setDescription([]);
-        setImage(null);
-        setLevel("");
-        setIsOpen(false);
-        setShowNotification({
-            active: true,
-            mensage: "Score adicionado",
-            bgColor: "bg-green-600"
-        });
+        if (description.length > 0) {
+            setNewDescription("");
+            props.onAdd({level: level, img: image, description: description});
+            setDescription([]);
+            setImage("");
+            setLevel("");
+            setIsOpen(false);
+            setShowNotification({
+                active: true,
+                mensage: "Score adicionado",
+                bgColor: "bg-green-600"
+            });
+        } else {
+            setShowNotification({
+                active: true,
+                mensage: "Adicione pelo menos uma descrição",
+                bgColor: "bg-orange-500"
+            });
+        }
     }
 
     const addNewDescriptionButton = () => {
@@ -177,8 +181,26 @@ export function ScoreInput(props:ScoreInputProps) {
 
     const openModal = () => {
         if (level !== "") {
-            setIsOpen(true);
-            setAlertLevel(false);
+            if (!props.list.some((score) => score.level === level)){
+                if (!(Number(level) < 1)){
+                    setIsOpen(true);
+                    setAlertLevel(false);
+                } else {
+                    setShowNotification({
+                        active: true,
+                        mensage: "Nível não pode ser menor que 1",
+                        bgColor: "bg-orange-500"
+                    })
+                    setAlertLevel(true);
+                }
+            } else {
+                setShowNotification({
+                    active: true,
+                    mensage: "Não pode ter níveis iguais",
+                    bgColor: "bg-orange-500"
+                })
+                setAlertLevel(true);
+            }
         } else {
             setAlertLevel(true);
         }
@@ -191,7 +213,11 @@ export function ScoreInput(props:ScoreInputProps) {
             const imageUrl = URL.createObjectURL(file); // Pré-visualização local da imagem
             setImage(imageUrl);
         } else {
-            alert("Por favor, selecione uma imagem JPG ou PNG.");
+            setShowNotification({
+                active: true,
+                mensage: "Por favor, selecione uma imagem JPG ou PNG.",
+                bgColor: "bg-orange-500"
+            });
         }
     };
 
@@ -218,12 +244,12 @@ export function ScoreInput(props:ScoreInputProps) {
                         className={`rounded-[8px] pl-2 h-[35px] w-[100%] border-[2px] ${alertLevel ? "border-red-600" : "border-mygray-500"}`} 
                         type="number" 
                         placeholder="Nível"/>
-                    <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível</p>
+                    <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível válido</p>
                 </div>
                 <button onClick={handleSelectImage} 
                     type="button" 
-                    className={`w-[45%] h-[35px] rounded-[8px] border-[2px] border-mygray-500 font-bold hover:bg-white ${image !== null ? "bg-green-500" : "bg-mygray-200"}`}>
-                    {image !== null ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
+                    className={`w-[45%] h-[35px] rounded-[8px] border-[2px] border-mygray-500 font-bold hover:bg-white ${image !== "" ? "bg-green-500" : "bg-mygray-200"}`}>
+                    {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
                 </button>
                 <input
                 ref={fileInputRef}
@@ -245,12 +271,12 @@ export function ScoreInput(props:ScoreInputProps) {
                         className={`rounded-[8px] pl-2 h-[35px] w-[100%] border-[2px] ${alertLevel ? "border-red-600" : "border-mygray-500"}`} 
                         type="number" 
                         placeholder="Nível"/>
-                    <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível</p>
+                    <p className={`text-red-600 mt-1 w-[100%] text-center ${alertLevel ? "" : "hidden"}`}>Adicione um nível válido</p>
                 </div>
                 <button onClick={handleSelectImage} 
                     type="button" 
-                    className={`w-[40%] h-[35px] rounded-[8px] border-[2px] border-mygray-500 font-bold hover:bg-white ${image !== null ? "bg-green-500" : "bg-mygray-200"}`}>
-                    {image !== null ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
+                    className={`w-[40%] h-[35px] rounded-[8px] border-[2px] border-mygray-500 font-bold hover:bg-white ${image !== "" ? "bg-green-500" : "bg-mygray-200"}`}>
+                    {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
                 </button>
                 <input
                 ref={fileInputRef}
@@ -274,13 +300,23 @@ export function ScoreInput(props:ScoreInputProps) {
             <div className="bg-white rounded-[8px] border-[2px] border-mygray-500 p-1">
                 <div className="min-h-[50px] max-h-[200px] overflow-y-auto w-[100%]">
                 { props.list.length === 0 ? (
-                            <p className="text-center text-gray-500 p-2 mt-1">Nenhuma descrição disponível.</p>
+                            <p className="text-center text-gray-500 p-2 mt-1">Nenhum score disponível.</p>
                         ): (
                             <ul>
                                 {props.list.map((score, index) => (
                                     <li className="p-2 border-b flex first-letter:uppercase items-center justify-between">
                                         {score.level}
                                         <div className="flex items-center gap-2 *:p-1">
+                                            {/* Botão visualizar imagem */}
+                                            <button onClick={() => {
+                                                setImage(score.img);
+                                                setImageModal(true);
+                                            }} 
+                                                type="button" 
+                                                className={`${score.img === "" ? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]`}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Picture-Double-Landscape--Streamline-Ultimate" height="24" width="24"><desc>Picture Double Landscape Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M18.75 5.25v-0.978c0.0015 -0.26409 -0.0491 -0.52588 -0.1488 -0.77042 -0.0998 -0.24454 -0.2467 -0.46704 -0.4324 -0.6548 -0.1857 -0.18776 -0.4066 -0.3371 -0.65 -0.4395 -0.2435 -0.1024 -0.5047 -0.15584 -0.7688 -0.15728H2.75003c-0.26409 0.00144 -0.52531 0.05488 -0.76874 0.15728 -0.24344 0.1024 -0.46432 0.25174 -0.65004 0.4395 -0.18572 0.18776 -0.332633 0.41026 -0.432359 0.6548 -0.099726 0.24454 -0.150309 0.50633 -0.148861 0.77042v9.456c-0.001448 0.2641 0.049135 0.5259 0.148861 0.7704 0.099726 0.2446 0.246639 0.4671 0.432359 0.6548 0.18572 0.1878 0.4066 0.3371 0.65004 0.4395 0.24343 0.1024 0.50465 0.1559 0.76874 0.1573" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m11.339 21.7499 4.439 -6.307c0.1304 -0.1863 0.3015 -0.3404 0.5003 -0.4508 0.1987 -0.1105 0.42 -0.1743 0.6471 -0.1866 0.227 -0.0123 0.4539 0.0271 0.6634 0.1154 0.2096 0.0882 0.3964 0.223 0.5462 0.394l4.938 5.643" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c-0.2071 0 -0.375 -0.1679 -0.375 -0.375s0.1679 -0.375 0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" d="M10.875 13.5c0.2071 0 0.375 -0.1679 0.375 -0.375s-0.1679 -0.375 -0.375 -0.375" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.25 8.25H7c-0.55228 0 -1 0.44772 -1 1v11.5c0 0.5523 0.44772 1 1 1h15.25c0.5523 0 1 -0.4477 1 -1V9.25c0 -0.55228 -0.4477 -1 -1 -1Z" stroke-width="1.5"></path></svg>
+                                            </button>
+
                                             {/* Botão de edição */}
                                             <button onClick={() => editScore(index, score.level)}
                                                 type="button" 
@@ -431,6 +467,29 @@ export function ScoreInput(props:ScoreInputProps) {
                 </div>
             </div>
         )}
+
+        {/* Modal Imagem */}
+        {imageModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white px-4 pb-1 pt-4 rounded-lg shadow-lg max-w-[90%] max-h-[90%] overflow-auto relative">
+                    <div className="flex justify-between h-[10%] mb-3">
+                        <div className="font-bold text-[18px] flex justify-center items-center w-[90%] pl-12">
+                            IMAGEM
+                        </div>
+                        <button type="button" onClick={() => {
+                            setImage("");
+                            setImageModal(false)
+                        }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <img src={image} alt="Visualização" className="max-w-full max-h-[70vh] rounded border-[2px] border-mygray-500 mb-4" />
+                </div>
+            </div>
+        )}
+
         </>
     )
 }
