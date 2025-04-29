@@ -79,7 +79,7 @@ export function DynamicListInput(props:DynamicListInputProps) {
             {props.icon}
             {props.title}:
         </div>
-        <div className="bg-mygray-300 p-2 rounded-[8px] border-[2px] border-mygray-500">
+        <div className="bg-mygray-200 p-2 rounded-[8px] border-[2px] border-mygray-500">
             <div className={`flex w-[100%] gap-1 mb-1 ${editDescriptionIndex !== null ? "hidden": ""}`}>
                 <input
                     value={newDescription}

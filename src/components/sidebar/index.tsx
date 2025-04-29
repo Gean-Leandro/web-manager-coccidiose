@@ -13,7 +13,10 @@ export function Sidebar(){
                 *:text-[15px] *:py-3">
                     <Link to='/cadastros-eimerias' className="hover:bg-mygray-700 mx-1 rounded-[3px]">EIMERIAS</Link>
                     <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">GLOSSÁRIO</Link>
-                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">USUÁRIOS</Link>
+                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">NOMES CIENTÍFICOS</Link>
+                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">REFERÊNCIAS</Link>
+                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">PERFIL</Link>
+                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">CONTAS</Link>
                 </div>
             </div>
             <div className="h-[50svh] flex items-end justify-center">

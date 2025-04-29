@@ -4,16 +4,22 @@ import { DynamicListInput } from "../../components/DynamicListInput";
 import './NovaEimeria.css';
 import { Notification } from "../../components/Notification";
 import { ScoreInput } from "../../components/ScoreInput";
+import { Link } from 'react-router-dom';
+import { salvarEimeria } from "../../../firebaseFunctions"
 
 interface Iscore {
     level: number | string,
-    img: string,
+    img: string | File,
+    imgUrlTemp: string,
+    imgPath: string,
     description: Array<string>
 }
 
 interface eimeriaProps{
     name: string,
-    img_local: string,
+    imgLocal: string | File,
+    imgLocalUrlTemp: string,
+    imgPath: string,
     category: string,
     general_description: Array<string>,
     place_of_action: Array<string>,
@@ -28,7 +34,9 @@ export function NovaEimeria(){
 
     const [eimeria, setEimeria] = useState<eimeriaProps>({
         name: '',
-        img_local: '',
+        imgLocal: '',
+        imgLocalUrlTemp: '',
+        imgPath:'',
         category: '',
         general_description: [],
         place_of_action: [],
@@ -38,7 +46,8 @@ export function NovaEimeria(){
 
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("");
-    const [image, setImage] = useState<string>("");
+    const [image, setImage] = useState<string | File>("");
+    const [imageUrlFile, setImageUrlFile] = useState<string>("");
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
@@ -52,7 +61,8 @@ export function NovaEimeria(){
         const file = event.target.files?.[0];
         if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
             const imageUrl = URL.createObjectURL(file); // Pré-visualização local da imagem
-            setImage(imageUrl);
+            setImageUrlFile(imageUrl);
+            setImage(file);
         } else {
             setShowNotification({
                 active: true,
@@ -62,11 +72,21 @@ export function NovaEimeria(){
         }
     };
 
-    const addNewEimeria = () => {
-        if (category !== ""){
-            setName(category);
-        } else {
-            setName(`Categoria não selecionada`);
+    const addNewEimeria = async () => {
+        try {
+            await salvarEimeria(eimeria);
+            setShowNotification({
+                active: true,
+                mensage: "Nova espécie cadastrada!",
+                bgColor: "bg-green-600",
+            });
+        } catch (error) {
+            setShowNotification({
+                active: true,
+                mensage: "Erro: " + error,
+                bgColor: "bg-orange-500",
+            });
+
         }
     } 
 
@@ -94,7 +114,7 @@ export function NovaEimeria(){
                         <input
                         value={name}
                         onChange={(e) => setName(e.target.value)} 
-                        className="h-[45px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
+                        className="h-[45px] w-[403px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
                     </div>
 
                     {/* Campo Imagem */}
@@ -104,7 +124,7 @@ export function NovaEimeria(){
                         <button 
                             onClick={() => fileInputRef.current?.click()}
                             type="button" 
-                            className={`h-[45px] ${image !== "" ? "bg-green-500" : "bg-mygray-200"} border-[2px] border-mygray-500 rounded-[8px] font-bold px-8 hover:bg-mygray-400`}>
+                            className={`h-[45px] ${image !== "" ? "bg-green-500 text-white" : "bg-mygray-200"} border-[2px] border-mygray-500 rounded-[8px] font-bold px-8 hover:bg-mygray-400`}>
                             {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
                         </button>
                         <button
@@ -297,8 +317,12 @@ export function NovaEimeria(){
                     </div>
 
                     <div className="col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
-                        <button type="button" className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">CANCELAR</button>
-                        <button onClick={addNewEimeria} type="button" className="bg-black rounded-[8px] text-white hover:bg-mygray-600">CADASTRAR</button>
+                        <Link to={'/cadastros-eimerias'} className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            CANCELAR
+                        </Link>
+                        <button onClick={addNewEimeria} type="button" className="bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            CADASTRAR
+                        </button>
                     </div>
                 </div>
                 </form>

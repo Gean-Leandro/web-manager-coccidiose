@@ -17,13 +17,13 @@ export function Login() {
             <img src='/src/assets/chicken_icon.svg'/>
           </div>
           
-          <div className='bg-mygray-900 text-white text-center p-5 rounded-[25px] mt-[31px]'>
-            <p className='tracking-[0.67svh] pl-[0.7svh]'>Gerenciador WEB</p>
+          <div className='bg-mygray-900 text-white text-center py-5 px-12 rounded-[25px] mt-[31px]'>
+            <p className='tracking-[0.65svh] pl-[0.7svh]'>Gerenciador WEB</p>
             <p className='font-bold uppercase'>Coccidiose Aviária APP</p>
 
             <div className='flex flex-col space-y-4 mt-[43px] *:h-[41px] *:rounded-[8px] *:w-[290px]'>
               <input className='pl-2 bg-mygray-200 text-black' type="text" name="E-MAIL" id="email" placeholder='E-mail'/>
-              <input className='pl-2 bg-mygray-200 text-black' type="password" name="E-MAIL" id="email" placeholder='Senha'/>
+              <input className='pl-2 bg-mygray-200 text-black' type="password" name="E-MAIL" id="senha" placeholder='Senha'/>
               <Link 
               to={'/cadastros-eimerias'} 
               className='flex font-bold bg-white text-black hover:bg-mygray-800 hover:text-white items-center justify-center'>
