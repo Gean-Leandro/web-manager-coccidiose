@@ -4,8 +4,8 @@ import { DynamicListInput } from "../../components/DynamicListInput";
 import './NovaEimeria.css';
 import { Notification } from "../../components/Notification";
 import { ScoreInput } from "../../components/ScoreInput";
-import { Link } from 'react-router-dom';
-import { salvarEimeria } from "../../../firebaseFunctions"
+import { Link, useNavigate } from 'react-router-dom';
+import { EimeriaService } from "../../services/eimeriaService"
 
 interface Iscore {
     level: number | string,
@@ -32,6 +32,7 @@ export function NovaEimeria(){
         document.title = "Nova Eimeria"
     }, []);
 
+    const navigate = useNavigate();
     const [eimeria, setEimeria] = useState<eimeriaProps>({
         name: '',
         imgLocal: '',
@@ -46,8 +47,6 @@ export function NovaEimeria(){
 
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("");
-    const [image, setImage] = useState<string | File>("");
-    const [imageUrlFile, setImageUrlFile] = useState<string>("");
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
@@ -60,9 +59,12 @@ export function NovaEimeria(){
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
-            const imageUrl = URL.createObjectURL(file); // Pré-visualização local da imagem
-            setImageUrlFile(imageUrl);
-            setImage(file);
+            const imageUrl = URL.createObjectURL(file);
+            setEimeria((prev) => ({
+                ...prev,
+                imgLocal: file,
+                imgLocalUrlTemp: imageUrl
+            }))
         } else {
             setShowNotification({
                 active: true,
@@ -73,21 +75,23 @@ export function NovaEimeria(){
     };
 
     const addNewEimeria = async () => {
-        try {
-            await salvarEimeria(eimeria);
-            setShowNotification({
-                active: true,
-                mensage: "Nova espécie cadastrada!",
-                bgColor: "bg-green-600",
-            });
-        } catch (error) {
-            setShowNotification({
-                active: true,
-                mensage: "Erro: " + error,
-                bgColor: "bg-orange-500",
-            });
-
-        }
+            try {
+                await EimeriaService.salvarEimeria(eimeria, category);
+                setShowNotification({
+                    active: true,
+                    mensage: "Nova espécie cadastrada!",
+                    bgColor: "bg-green-600",
+                });
+                navigate('/cadastros-eimerias')
+            } catch (error) {
+                setShowNotification({
+                    active: true,
+                    mensage: "Erro: " + error,
+                    bgColor: "bg-orange-500",
+                });
+                
+            }
+        // }
     } 
 
     return(
@@ -113,7 +117,10 @@ export function NovaEimeria(){
                         Nome:
                         <input
                         value={name}
-                        onChange={(e) => setName(e.target.value)} 
+                        onChange={(e) => {
+                            setName(e.target.value);
+                            setEimeria((prev) => ({...prev, name: e.target.value}));
+                        }} 
                         className="h-[45px] w-[403px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" type="text" placeholder="Nome"/>
                     </div>
 
@@ -124,13 +131,13 @@ export function NovaEimeria(){
                         <button 
                             onClick={() => fileInputRef.current?.click()}
                             type="button" 
-                            className={`h-[45px] ${image !== "" ? "bg-green-500 text-white" : "bg-mygray-200"} border-[2px] border-mygray-500 rounded-[8px] font-bold px-8 hover:bg-mygray-400`}>
-                            {image !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
+                            className={`h-[45px] ${eimeria.imgLocal !== "" ? "bg-green-500 text-white" : "bg-mygray-200"} border-[2px] border-mygray-500 rounded-[8px] font-bold px-8 hover:bg-mygray-400`}>
+                            {eimeria.imgLocal !== "" ? "IMAGEM SELECIONADA" : "SELECIONAR IMAGEM"}
                         </button>
                         <button
-                            onClick={() => setImage("")} 
+                            onClick={() => setEimeria((prev) => ({...prev, imgLocal: "", imgLocalUrlTemp:""}))} 
                             type="button"
-                            className={`${image === ""? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px] p-2`}>
+                            className={`${eimeria.imgLocal === ""? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px] p-2`}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>

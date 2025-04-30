@@ -1,23 +1,44 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { eimeriaProps } from "../../services/eimeriaService";
+import { useState } from "react";
 
 interface ListSpeciesProps{
-    list: Array<{
-        id:string,
-        name:string
-    }>
+    list: Array<eimeriaProps>
 }
 
-export function ListSpecies(listSpeciesProps:ListSpeciesProps) {
+export function ListSpecies(eimerias:ListSpeciesProps) {
+    const [busca, setBusca] = useState('');
+    const [filtradas, setFiltradas] = useState<eimeriaProps[]>(eimerias.list);
+    
+    const handleBuscar = () => {
+        if (busca.trim() === ''){
+            setFiltradas(eimerias.list);
+        } else {    
+            const resultado = eimerias.list.filter((eimeria) =>
+                eimeria.name.toLowerCase().includes(busca.toLowerCase())
+            );
+            setFiltradas(resultado);
+        }
+    };
+
+
+
     return(
         <div className="bg-mygray-200 p-2 rounded-[8px] border-[2px] border-mygray-500">
             <div className="mb-2 w-[100%] flex justify-center items-center">
-                <input className="bg-white border-[2px] border-r-black border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[230px]" type="text" placeholder="Espécie" />
-                <button className="bg-mygray-900 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">BUSCAR</button>
+                <input className="bg-white border-[2px] border-r-black border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[230px]"
+                 type="text" 
+                 placeholder="Espécie"
+                 onChange={(e) => setBusca(e.target.value)}/>
+                <button type="button" onClick={handleBuscar}
+                    className="bg-mygray-900 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
+                    BUSCAR
+                </button>
             </div>
             <div className="bg-white rounded-[8px] p-2 border-[2px] border-mygray-500">
                 <div className="h-[40svh]  overflow-y-auto w-[100%]">
                     <ul>
-                        { listSpeciesProps.list.map((specie) => (
+                        { filtradas.map((specie) => (
                             <li className="p-2 border-b flex capitalize items-center justify-between">
                             {specie.name}
                             <div className="flex items-center gap-2 *:p-1">
