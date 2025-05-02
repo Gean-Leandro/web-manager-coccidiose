@@ -39,6 +39,9 @@ export function ScoreInput(props:ScoreInputProps) {
     const editScore = (index:number, level:number|string) => {
         setEditScoreIndex(index);
         setLevel(level);
+        if (props.list[index].img !== ""){
+            setImage(props.list[index].img);
+        }
     }
     
     const editScoreCancel = () => {
@@ -519,7 +522,11 @@ export function ScoreInput(props:ScoreInputProps) {
                             IMAGEM
                         </div>
                         <button type="button" onClick={() => {
-                            setImage("");
+                            if (editScoreIndex === null){
+                                setImage("");
+                            } else {
+                                setImage(props.list[editScoreIndex].img);
+                            }
                             setImageModal(false)
                         }}>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

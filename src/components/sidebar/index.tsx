@@ -12,7 +12,7 @@ export function Sidebar(){
                 <div className="grid grid-cols-1 mt-5 *:font-bold *:text-center 
                 *:text-[15px] *:py-3">
                     <Link to='/cadastros-eimerias' className="hover:bg-mygray-700 mx-1 rounded-[3px]">EIMERIAS</Link>
-                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">GLOSSÁRIO</Link>
+                    <Link to='/glossario' className="hover:bg-mygray-700 mx-1 rounded-[3px]">GLOSSÁRIO</Link>
                     <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">NOMES CIENTÍFICOS</Link>
                     <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">REFERÊNCIAS</Link>
                     <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">PERFIL</Link>
