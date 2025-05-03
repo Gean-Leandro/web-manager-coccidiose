@@ -95,9 +95,6 @@ export const EimeriaService = {
                 imgPath: imgLocalPath,
                 score: updatedScores,
             });
-            
-            
-            console.log("Espécie salva com sucesso!");
         } catch (error) {
             throw error;
         }
@@ -106,7 +103,6 @@ export const EimeriaService = {
     async delete(id:string) {
         try {
             await deleteDoc(doc(db, 'eimerias', id));
-            console.log('Eimeria excluída com sucesso!');
           } catch (error) {
             throw error
           }

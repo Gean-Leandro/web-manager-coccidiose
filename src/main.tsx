@@ -8,6 +8,8 @@ import { NewEimeria } from './pages/NewEimeria';
 import { ViewEimeria } from './pages/ViewEimeria';
 import { UpdateEimeria } from './pages/UpdateEimeria';
 import { Glossary } from './pages/Glossary';
+import { References } from './pages/References';
+import { ScientificNames } from './pages/ScientificNames';
 
 const router = createBrowserRouter([
   { path:'/', element: <Login/>},
@@ -15,7 +17,9 @@ const router = createBrowserRouter([
   { path:'/nova-eimeria', element: <NewEimeria/>},
   { path:'/visualizar-eimeria', element: <ViewEimeria/>},
   { path:'/atualizar-eimeria', element: <UpdateEimeria/>},
-  { path:'/glossario', element: <Glossary/>}
+  { path:'/glossario', element: <Glossary/>},
+  { path:'/referencias', element: <References/>},
+  { path:'/nomes-cientificos', element: <ScientificNames/>}
 ]);
 
 createRoot(document.getElementById("root")!).render(

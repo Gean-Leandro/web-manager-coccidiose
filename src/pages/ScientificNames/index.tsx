@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
-import { GlossaryService, Iglossary} from "../../services/glossaryService";
+import { ReferencesService, IReference } from "../../services/referencesService";
 
-export function Glossary() {
-    const [glossary, setGlossary] = useState<Iglossary[]>([]);
+export function ScientificNames() {
+    const [references, setReferences] = useState<IReference[]>([]);
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [filtradas, setFiltradas] = useState<Iglossary[]>([]);
+    const [filtradas, setFiltradas] = useState<IReference[]>([]);
     const [busca, setBusca] = useState<string>('');
     const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [openView, setOpenView] = useState<boolean>(false);
-    const [viewGlossaryItem, setViewGlossaryItem] = useState<Iglossary>({id: '', word: '', meaning: ''});
-    const [glossaryItem, setGlossaryItem] = useState<Iglossary>({id: '', word: '', meaning: ''});
+    const [viewReferenceItem, setViewReferenceItem] = useState<IReference>({id: '', title: '', reference: ''});
+    const [referenceItem, setReferenceItem] = useState<IReference>({id: '', title: '', reference: ''});
     const [idDelet, setIdDelet] = useState<string>('');
-    const [editGlossary, setEditGlossary] = useState<boolean>(false);
+    const [editReference, setEditReference] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
 
     useEffect(() => {
-        document.title = "Glossario";
-        const fetchGlossary = async () => {
-            const query = await GlossaryService.getGlossary();
+        document.title = "Nomes Científicos";
+        const fetchReferences = async () => {
+            const query = await ReferencesService.getReferences();
             if (query.status === "OK") {
-                setGlossary(query.result);
+                setReferences(query.result);
                 setFiltradas(query.result);
             } else {
                 setShowNotification({
@@ -34,25 +34,25 @@ export function Glossary() {
                 })
             }
         }
-        fetchGlossary();
+        fetchReferences();
     }, []);
 
     const handleBuscar = () => {
         if (busca.trim() === ''){
-            setFiltradas(glossary);
+            setFiltradas(references);
         } else {    
-            const resultado = glossary.filter((item) =>
-                item.word.toLowerCase().includes(busca.toLowerCase())
+            const resultado = references.filter((item) =>
+                item.title.toLowerCase().includes(busca.toLowerCase())
             );
             setFiltradas(resultado);
         }
     };
 
     const updateGlossaryList = async () => {
-        const query = await GlossaryService.getGlossary();
+        const query = await ReferencesService.getReferences();
 
         if (query.status === "OK") {
-            setGlossary(query.result);
+            setReferences(query.result);
             setFiltradas(query.result);
         } else {
             setShowNotification({
@@ -63,23 +63,23 @@ export function Glossary() {
         }
     }
 
-    const addNewGossary = async () => {
-        if (!(glossaryItem.word === "") || !(glossaryItem.meaning === "")) {
+    const addNewReference = async () => {
+        if (!(referenceItem.title === "") && !(referenceItem.reference === "")) {
 
-            const wordExist = glossary.some(
-                (item) => item.word.trim().toLowerCase() === glossaryItem.word.trim().toLowerCase()
+            const titleExist = references.some(
+                (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase()
             )
 
-            if (!wordExist) {
+            if (!titleExist) {
                 try {
-                    await GlossaryService.addNew(glossaryItem);
-                    setGlossaryItem({id:"", word:"", meaning: ""});
+                    await ReferencesService.addNew(referenceItem);
+                    setReferenceItem({id:"", title:"", reference: ""});
     
                     updateGlossaryList();
     
                     setShowNotification({
                         active: true, 
-                        mensage: "Nova palavra adicionada", 
+                        mensage: "Nova referência adicionada", 
                         bgColor: "bg-green-600"
                     })
                 } catch (error) {
@@ -92,7 +92,7 @@ export function Glossary() {
             } else {
                 setShowNotification({
                     active: true, 
-                    mensage: "Palavra já existe", 
+                    mensage: "Titulo já existe", 
                     bgColor: "bg-orange-500"
                 })
             }
@@ -110,27 +110,34 @@ export function Glossary() {
         setDisableButton(true);
 
         try {
-            const wordIdentic = glossary.some(
-                (item) => item.word.trim().toLowerCase() === glossaryItem.word.trim().toLowerCase() && item.meaning.trim().toLowerCase() === glossaryItem.meaning.trim().toLowerCase() 
+            const referenceIdentic = references.some(
+                (item) => item.title.trim().toLowerCase() === referenceItem.title.trim().toLowerCase() && item.reference.trim().toLowerCase() === referenceItem.reference.trim().toLowerCase() 
             )
 
-            if (!wordIdentic) {
-
-                await GlossaryService.update(glossaryItem);
-                setGlossaryItem({id:'', word:'', meaning:''});
-                setEditGlossary(false);
-                
-                updateGlossaryList();
-                
-                setShowNotification({
-                    active: true, 
-                    mensage: "Palavra atualizada", 
-                    bgColor: "bg-green-600"
-                })
+            if (referenceItem.reference !== "" && referenceItem.title !== "") {
+                if (!referenceIdentic){   
+                    await ReferencesService.update(referenceItem);
+                    setReferenceItem({id:'', title:'', reference:''});
+                    setEditReference(false);
+                    
+                    updateGlossaryList();
+                    
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Referência atualizada", 
+                        bgColor: "bg-green-600"
+                    })
+                } else {
+                    setShowNotification({
+                        active: true, 
+                        mensage: "Não exite alterações para serem atualizadas", 
+                        bgColor: "bg-orange-500"
+                    })
+                }
             } else {
                 setShowNotification({
                     active: true, 
-                    mensage: "Não exite alterações para serem atualizadas", 
+                    mensage: "Preencha todos os campos", 
                     bgColor: "bg-orange-500"
                 })
             }
@@ -144,13 +151,13 @@ export function Glossary() {
         setDisableButton(false);
     }
     
-    const deleteWord = async () => {
+    const deleteReference = async () => {
         try {
-            await GlossaryService.delete(idDelet);
+            await ReferencesService.delete(idDelet);
             updateGlossaryList();
             setShowNotification({
                 active: true, 
-                mensage: "Palavra excluida", 
+                mensage: "Referência excluida", 
                 bgColor: "bg-green-600"
             })
             setConfirmModal(false);
@@ -179,7 +186,7 @@ export function Glossary() {
             <Sidebar/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
-                    GLOSSÁRIO
+                    NOMES CIENTÍFICOS
                 </div>
 
                 {openView && (
@@ -200,10 +207,10 @@ export function Glossary() {
 
                             <div className="*:bg-white *:border-mygray-500 *:border-[2px] *:rounded-[8px] *:p-2 *:font-normal">
                                 <p className="h-[35px] items-center flex mb-2">
-                                    {viewGlossaryItem.word}
+                                    {viewReferenceItem.title}
                                 </p>
                                 <p className="">
-                                    {viewGlossaryItem.meaning}
+                                    {viewReferenceItem.reference}
                                 </p>
                             </div>
                         </div>
@@ -217,7 +224,7 @@ export function Glossary() {
                         <div className={`${!fieldBusca && 'hidden'} mb-2 w-[100%] flex justify-center items-center`}>
                             <input className="bg-white border-[2px] border-r-black border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[230px]"
                             type="text" 
-                            placeholder="Palavra"
+                            placeholder="Título"
                             onChange={(e) => setBusca(e.target.value)}/>
                             <button type="button" onClick={handleBuscar}
                                 className="bg-mygray-900 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
@@ -226,30 +233,30 @@ export function Glossary() {
                         </div>
 
                         {/* Campo editar */}
-                        <div className={`${fieldBusca && 'hidden'} mb-2 ${editGlossary === true ? "min-w-[500px]": "min-w-[400px]"}`}>
+                        <div className={`${fieldBusca && 'hidden'} mb-2 ${editReference === true ? "min-w-[500px]": "min-w-[400px]"}`}>
                             <div className="w-[100%] flex justify-between mb-2">
-                                <input className={`bg-white border-[2px] border-mygray-500 rounded-[8px] pl-2 h-[35px] ${editGlossary == true ? "w-[55%]": "w-[80%]"}`}
+                                <input className={`bg-white border-[2px] border-mygray-500 rounded-[8px] pl-2 h-[35px] ${editReference == true ? "w-[55%]": "w-[80%]"}`}
                                 type="text" 
-                                value={glossaryItem.word}
-                                placeholder="Palavra"
-                                onChange={(e) => setGlossaryItem((prev) => ({...prev, word:e.target.value}))}/>
+                                value={referenceItem.title}
+                                placeholder="Título"
+                                onChange={(e) => setReferenceItem((prev) => ({...prev, title:e.target.value}))}/>
 
                                 {/* Adicionar Button */}
                                 <button
-                                    onClick={addNewGossary}
+                                    onClick={addNewReference}
                                     type="button" 
-                                    className={`${editGlossary && "hidden"} bg-mygray-900 flex items-center justify-center h-[35px] w-[19%] rounded-[8px] hover:bg-mygray-600`}>
+                                    className={`${editReference && "hidden"} bg-mygray-900 flex items-center justify-center h-[35px] w-[19%] rounded-[8px] hover:bg-mygray-600`}>
                                     <img width={25} height={25} src="\src\assets\AddWhite.png" alt="" />
                                 </button>
 
                                 {/* Cancelar Button */}
                                 <button
                                     onClick={() => {
-                                        setEditGlossary(false);
-                                        setGlossaryItem({id:'', word:'', meaning:''});
+                                        setEditReference(false);
+                                        setReferenceItem({id:'', title:'', reference:''});
                                     }}
                                     type="button" 
-                                    className={`${!editGlossary && "hidden"} bg-mygray-900 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-mygray-600`}>
+                                    className={`${!editReference && "hidden"} bg-mygray-900 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-mygray-600`}>
                                     CANCELAR
                                 </button>
 
@@ -258,16 +265,16 @@ export function Glossary() {
                                     disabled={disableButton}
                                     onClick={updateGlossary}
                                     type="button" 
-                                    className={`${!editGlossary && "hidden"} bg-green-600 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-green-500`}>
+                                    className={`${!editReference && "hidden"} bg-green-600 flex items-center justify-center text-white font-bold h-[35px] w-[22%] rounded-[8px] hover:bg-green-500`}>
                                     SALVAR
                                 </button>
                             </div>
                             <div className="w-[100%]">
                                 <textarea className="bg-white border-[2px] border-mygray-500 break-words rounded-[8px] p-2 h-[95px] w-[100%]"
                                 rows={5} 
-                                value={glossaryItem.meaning}
-                                placeholder="Significado"
-                                onChange={(e) => setGlossaryItem((prev) => ({...prev, meaning:e.target.value}))}/>
+                                value={referenceItem.reference}
+                                placeholder="Referencia"
+                                onChange={(e) => setReferenceItem((prev) => ({...prev, reference:e.target.value}))}/>
                             </div>
                         </div>
                         <div className="bg-white rounded-[8px] p-2 border-[2px] border-mygray-500">
@@ -276,20 +283,20 @@ export function Glossary() {
                                 <ul>
                                     { filtradas.map((item) => (
                                         <li className="p-2 border-b flex capitalize items-center justify-between">
-                                        {item.word}
+                                        {item.title}
                                         <div className="flex items-center gap-2 *:p-1">
                                             <button type="button"
                                                 onClick={() => {
-                                                    setGlossaryItem(item);
+                                                    setReferenceItem(item);
                                                     setFieldBusca(false);
-                                                    setEditGlossary(true);
+                                                    setEditReference(true);
                                                 }} 
-                                                className={`${editGlossary && glossaryItem.id === item.id ? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]`}>
+                                                className={`${editReference && referenceItem.id === item.id ? "hidden": ""} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Pencil-1--Streamline-Ultimate" height="24" width="24"><desc>Pencil 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.19 1.81002c-0.3406 -0.33916 -0.7449 -0.60748 -1.1898 -0.78945 -0.4449 -0.181969 -0.9214 -0.273985 -1.402 -0.270731 -0.4806 0.003255 -0.9558 0.101715 -1.3982 0.289691 -0.4423 0.18798 -0.8431 0.46175 -1.179 0.80549L2.521 16.345 0.75 23.25l6.905 -1.771 14.5 -14.49998c0.3437 -0.33593 0.6175 -0.73665 0.8055 -1.17901 0.188 -0.44235 0.2864 -0.91756 0.2897 -1.39819 0.0032 -0.48063 -0.0888 -0.95713 -0.2707 -1.40199 -0.182 -0.44486 -0.4503 -0.84925 -0.7895 -1.18981Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m16.606 2.26001 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.512 4.354 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m2.521 16.345 5.139 5.129" stroke-width="1.5"></path></svg>
                                             </button>
                                             <button type="button"
                                                 onClick={() => {
-                                                    setViewGlossaryItem(item);
+                                                    setViewReferenceItem(item);
                                                     setOpenView(true);
                                                 }} 
                                                 className="hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]">
@@ -322,7 +329,7 @@ export function Glossary() {
                                     )) }
                                 </ul>
                             :   <div className="h-[100%] w-[100%] flex justify-center items-center text-mygray-700">
-                                    Nenhuma palavra cadastrada
+                                    Nenhuma referência cadastrada
                                 </div>
                             }
                             </div>
@@ -380,7 +387,7 @@ export function Glossary() {
                                 </defs>
                             </svg>
                         </div>
-                        Deseja excluir essa palavra?
+                        Deseja excluir essa referência?
                     </div>
 
 
@@ -395,7 +402,7 @@ export function Glossary() {
                         </button>
                         <button type="button"
                             disabled={disableButton}
-                            onClick={deleteWord} 
+                            onClick={deleteReference} 
                             className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
                             EXCLUIR
                         </button>
