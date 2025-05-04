@@ -10,6 +10,8 @@ import { UpdateEimeria } from './pages/UpdateEimeria';
 import { Glossary } from './pages/Glossary';
 import { References } from './pages/References';
 import { ScientificNames } from './pages/ScientificNames';
+import { Accounts } from './pages/Accounts';
+import { NewAccount } from './pages/NewAccount';
 
 const router = createBrowserRouter([
   { path:'/', element: <Login/>},
@@ -19,7 +21,9 @@ const router = createBrowserRouter([
   { path:'/atualizar-eimeria', element: <UpdateEimeria/>},
   { path:'/glossario', element: <Glossary/>},
   { path:'/referencias', element: <References/>},
-  { path:'/nomes-cientificos', element: <ScientificNames/>}
+  { path:'/nomes-cientificos', element: <ScientificNames/>},
+  { path:'/contas', element: <Accounts/>},
+  { path:'/nova-conta', element: <NewAccount/>}
 ]);
 
 createRoot(document.getElementById("root")!).render(

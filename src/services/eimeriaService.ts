@@ -1,6 +1,8 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../firebaseConfig";
+import { ScientificNamesService } from "./scientificNamesService";
+
 
 export interface Iscore {
     level: number | string,
@@ -95,6 +97,8 @@ export const EimeriaService = {
                 imgPath: imgLocalPath,
                 score: updatedScores,
             });
+
+            await ScientificNamesService.addNew({id: '', name: data.name})
         } catch (error) {
             throw error;
         }

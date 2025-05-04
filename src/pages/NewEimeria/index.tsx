@@ -16,6 +16,7 @@ interface Iscore {
 }
 
 interface eimeriaProps{
+    id: string,
     name: string,
     imgLocal: string | File,
     imgLocalUrlTemp: string,
@@ -34,6 +35,7 @@ export function NewEimeria(){
 
     const navigate = useNavigate();
     const [eimeria, setEimeria] = useState<eimeriaProps>({
+        id: '',
         name: '',
         imgLocal: '',
         imgLocalUrlTemp: '',

@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import './Eimeria.css';
 import { Sidebar } from "../../components/sidebar";
 import { EimeriaService, eimeriaProps } from "../../services/eimeriaService";
+import { AccountService, IAccount } from "../../services/accountService";
 import { Notification } from "../../components/Notification";
 import { Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
 
 
 export function CadastrosEimeria(){
@@ -15,6 +18,7 @@ export function CadastrosEimeria(){
     const [busca, setBusca] = useState('');
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [idDelet, setIdDelet] = useState<string>('');
+    const [login, setLogin] = useState();
     
     useEffect(() => {
         document.title = "Cadastros de Eimerias";
@@ -31,6 +35,14 @@ export function CadastrosEimeria(){
                 })
             }
         }
+
+        // const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        //     if (user) {
+        //         const uid = user.uid;
+        //         const query = await AccountService.getAccount(uid);
+        //         setLogin(query)
+        //     } 
+        // })
         fetchEimerias();
     }, []);
 
