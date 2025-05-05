@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { ScientificNamesService, IScientificNames } from "../../services/scientificNamesService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
+import { AccountService } from "../../services/accountService";
 
 export function ScientificNames() {
     const [scientificNames, setScientificNames] = useState<IScientificNames[]>([]);
@@ -16,6 +19,7 @@ export function ScientificNames() {
     const [idDelet, setIdDelet] = useState<string>('');
     const [editScientificName, setEditScientificName] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [login, setLogin] = useState<string>('');
 
     useEffect(() => {
         document.title = "Nomes Científicos";
@@ -33,6 +37,17 @@ export function ScientificNames() {
             }
         }
         fetchReferences();
+
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleBuscar = () => {
@@ -181,7 +196,7 @@ export function ScientificNames() {
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     NOMES CIENTÍFICOS

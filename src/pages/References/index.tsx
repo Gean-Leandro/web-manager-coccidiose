@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { ReferencesService, IReference } from "../../services/referencesService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
+import { AccountService } from "../../services/accountService";
 
 export function References() {
     const [references, setReferences] = useState<IReference[]>([]);
@@ -18,6 +21,8 @@ export function References() {
     const [idDelet, setIdDelet] = useState<string>('');
     const [editReference, setEditReference] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [login, setLogin] = useState<string>("");
+    
 
     useEffect(() => {
         document.title = "Referências";
@@ -35,6 +40,16 @@ export function References() {
             }
         }
         fetchReferences();
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleBuscar = () => {
@@ -183,7 +198,7 @@ export function References() {
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     REFERÊNCIAS

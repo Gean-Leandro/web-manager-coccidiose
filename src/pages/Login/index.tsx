@@ -19,14 +19,23 @@ export function Login() {
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      navigate('/cadastros-eimerias');
+      if (email !== "" && senha !== ""){
+        await signInWithEmailAndPassword(auth, email, senha);
+        navigate('/cadastros-eimerias');
+
+      } else {
+        setShowNotification({
+          active: true, 
+          mensage: "Preencha todos os campos", 
+          bgColor: "bg-orange-500"
+        })
+      } 
     } catch (error) {
       setShowNotification({
         active: true, 
         mensage: "E-mail ou senha invalido", 
         bgColor: "bg-orange-500"
-    })
+      })
     }
   };
 

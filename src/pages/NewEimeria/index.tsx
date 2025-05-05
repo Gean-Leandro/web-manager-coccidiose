@@ -6,6 +6,9 @@ import { Notification } from "../../components/Notification";
 import { ScoreInput } from "../../components/ScoreInput";
 import { Link, useNavigate } from 'react-router-dom';
 import { EimeriaService } from "../../services/eimeriaService"
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
+import { AccountService } from "../../services/accountService";
 
 interface Iscore {
     level: number | string,
@@ -30,7 +33,17 @@ interface eimeriaProps{
 
 export function NewEimeria(){
     useEffect(() => {
-        document.title = "Nova Eimeria"
+        document.title = "Nova Eimeria";
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const navigate = useNavigate();
@@ -52,6 +65,7 @@ export function NewEimeria(){
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
+    const [login, setLogin] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +121,7 @@ export function NewEimeria(){
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     CADASTRANDO NOVA EIMERIA

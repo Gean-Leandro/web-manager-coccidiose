@@ -2,7 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from '../../../firebaseConfig';
 
-export function Sidebar(){
+interface ISidebar {
+    levelAccount: string
+}
+
+export function Sidebar(props:ISidebar){
     const navigate = useNavigate();
     const handleLogout = async () => {
         try {
@@ -25,8 +29,8 @@ export function Sidebar(){
                     <Link to='/glossario' className="hover:bg-mygray-700 mx-1 rounded-[3px]">GLOSSÁRIO</Link>
                     <Link to='/nomes-cientificos' className="hover:bg-mygray-700 mx-1 rounded-[3px]">NOMES CIENTÍFICOS</Link>
                     <Link to='/referencias' className="hover:bg-mygray-700 mx-1 rounded-[3px]">REFERÊNCIAS</Link>
-                    <Link to='/' className="hover:bg-mygray-700 mx-1 rounded-[3px]">PERFIL</Link>
-                    <Link to='/contas' className="hover:bg-mygray-700 mx-1 rounded-[3px]">CONTAS</Link>
+                    <Link to='/perfil' className="hover:bg-mygray-700 mx-1 rounded-[3px]">PERFIL</Link>
+                    <Link to='/contas' className={`${props.levelAccount !== "admin"? "hidden" : ""} hover:bg-mygray-700 mx-1 rounded-[3px]`}>CONTAS</Link>
                 </div>
             </div>
             <div className="h-[20%] flex items-end justify-center">

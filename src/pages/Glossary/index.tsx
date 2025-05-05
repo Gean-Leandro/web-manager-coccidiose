@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { GlossaryService, Iglossary} from "../../services/glossaryService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
+import { AccountService } from "../../services/accountService";
 
 export function Glossary() {
     const [glossary, setGlossary] = useState<Iglossary[]>([]);
@@ -18,6 +21,7 @@ export function Glossary() {
     const [idDelet, setIdDelet] = useState<string>('');
     const [editGlossary, setEditGlossary] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [login, setLogin] = useState<string>("");
 
     useEffect(() => {
         document.title = "Glossario";
@@ -35,6 +39,16 @@ export function Glossary() {
             }
         }
         fetchGlossary();
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleBuscar = () => {
@@ -176,7 +190,7 @@ export function Glossary() {
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     GLOSSÁRIO

@@ -3,6 +3,8 @@ import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { AccountService, IAccount } from "../../services/accountService";
 import { Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
 
 export function Accounts() {
     const [accounts, setAccounts] = useState<IAccount[]>([]);
@@ -16,6 +18,7 @@ export function Accounts() {
     const [AccountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:''});
     const [idDelet, setIdDelet] = useState<string>('');
     const [disableButton, setDisableButton] = useState<boolean>(false);
+    const [login, setLogin] = useState<string>("");
 
     useEffect(() => {
         document.title = "Contas";
@@ -33,6 +36,16 @@ export function Accounts() {
             }
         }
         fetchAccounts();
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const handleBuscar = () => {
@@ -93,7 +106,7 @@ export function Accounts() {
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     CONTAS

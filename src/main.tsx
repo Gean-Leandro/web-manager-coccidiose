@@ -12,18 +12,21 @@ import { References } from './pages/References';
 import { ScientificNames } from './pages/ScientificNames';
 import { Accounts } from './pages/Accounts';
 import { NewAccount } from './pages/NewAccount';
+import PrivateRoute from './components/PivateRoute';
+import { Profile } from './pages/Profile';
 
 const router = createBrowserRouter([
   { path:'/', element: <Login/>},
-  { path:'/cadastros-eimerias', element: <CadastrosEimeria/>},
-  { path:'/nova-eimeria', element: <NewEimeria/>},
-  { path:'/visualizar-eimeria', element: <ViewEimeria/>},
-  { path:'/atualizar-eimeria', element: <UpdateEimeria/>},
-  { path:'/glossario', element: <Glossary/>},
-  { path:'/referencias', element: <References/>},
-  { path:'/nomes-cientificos', element: <ScientificNames/>},
-  { path:'/contas', element: <Accounts/>},
-  { path:'/nova-conta', element: <NewAccount/>}
+  { path:'/cadastros-eimerias', element: <PrivateRoute><CadastrosEimeria/></PrivateRoute>},
+  { path:'/nova-eimeria', element: <PrivateRoute><NewEimeria/></PrivateRoute>},
+  { path:'/visualizar-eimeria', element: <PrivateRoute><ViewEimeria/></PrivateRoute>},
+  { path:'/atualizar-eimeria', element: <PrivateRoute><UpdateEimeria/></PrivateRoute>},
+  { path:'/glossario', element: <PrivateRoute><Glossary/></PrivateRoute>},
+  { path:'/referencias', element: <PrivateRoute><References/></PrivateRoute>},
+  { path:'/nomes-cientificos', element: <PrivateRoute><ScientificNames/></PrivateRoute>},
+  { path:'/contas', element: <PrivateRoute><Accounts/></PrivateRoute>},
+  { path:'/nova-conta', element: <PrivateRoute><NewAccount/></PrivateRoute>},
+  { path:'/perfil', element: <PrivateRoute><Profile/></PrivateRoute>}
 ]);
 
 createRoot(document.getElementById("root")!).render(

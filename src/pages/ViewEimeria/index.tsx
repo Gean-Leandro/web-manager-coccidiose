@@ -3,6 +3,9 @@ import { Sidebar } from "../../components/sidebar";
 import { DynamicListInputDescription } from "../../components/DynamicListDescription";
 import { Notification } from "../../components/Notification";
 import { Link, useLocation } from 'react-router-dom';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../firebaseConfig";
+import { AccountService } from "../../services/accountService";
 
 interface Iscore {
     level: number,
@@ -25,7 +28,17 @@ interface eimeriaProps{
 
 export function ViewEimeria(){
     useEffect(() => {
-        document.title = "Visualizando Eimeria"
+        document.title = "Visualizando Eimeria";
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const uid = user.uid;
+                const query = await AccountService.getAccountLevel(uid);
+                setLogin(query);
+            } 
+        })
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     const location = useLocation();
@@ -37,6 +50,7 @@ export function ViewEimeria(){
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
+    const [login, setLogin] = useState<string>('');
 
     function capitalizeFirstLetter(text: string) {
         const lowerText = text.toLowerCase();
@@ -54,7 +68,7 @@ export function ViewEimeria(){
         )}
 
         <div className="grid grid-cols-[250px_1fr] h-screen">
-            <Sidebar/>
+            <Sidebar levelAccount={login}/>
             <div className="px-[15svh] overflow-y-auto">
                 <div className="rounded-[8px] bg-mygray-300 flex items-center px-8 mt-5 h-[10svh] text-[25px]">
                     VISUALIZANDO EIMERIA
