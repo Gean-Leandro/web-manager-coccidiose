@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import './Eimeria.css';
 import { Sidebar } from "../../components/sidebar";
 import { EimeriaService, eimeriaProps } from "../../services/eimeriaService";
-import { AccountService, IAccount } from "../../services/accountService";
+import { AccountService } from "../../services/accountService";
 import { Notification } from "../../components/Notification";
 import { Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";

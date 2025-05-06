@@ -12,7 +12,7 @@ import { References } from './pages/References';
 import { ScientificNames } from './pages/ScientificNames';
 import { Accounts } from './pages/Accounts';
 import { NewAccount } from './pages/NewAccount';
-import PrivateRoute from './components/PivateRoute';
+import { PrivateRoute } from './components/PrivateRoute';
 import { Profile } from './pages/Profile';
 
 const router = createBrowserRouter([

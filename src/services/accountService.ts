@@ -1,5 +1,5 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword, EmailAuthProvider, getAuth, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updatePassword  } from "firebase/auth";
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from '../../firebaseConfig';
 
 export interface IAccount {
@@ -57,5 +57,76 @@ export const AccountService = {
         } catch (error) {
             return error;
         }
-    }
+    },
+    
+    async getAccount(uid:string):Promise<IAccount> {
+        try {
+            const docRef = doc(db, 'accounts', uid); // Supondo que o doc tem o UID como ID
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return {
+                    uid: docSnap.data().uid, 
+                    name: docSnap.data().name,
+                    email: docSnap.data().email,
+                    level: docSnap.data().level
+                };
+            } else {
+                throw "Usuário não encontrado na coleção accounts.";
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    async redefinientPassword(email:string) {
+        const auth = getAuth();
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (error) {
+            throw error
+        }
+    },
+
+    async updateAccount(account:IAccount) {
+        const docRef = doc(db, 'accounts', account.uid);
+
+        try {
+            await updateDoc(docRef, {
+                name: account.name,
+                level: account.level
+            });
+          } catch (error) {
+            throw error
+          }
+    },
+
+    async updatePasswordAccount(senhaAtual: string, novaSenha: string) {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!user || !user.email) {
+            throw new Error("Usuário não autenticado.");
+        }
+
+        try {
+            // Reautenticar o usuário
+            const credential = EmailAuthProvider.credential(user.email, senhaAtual);
+            await reauthenticateWithCredential(user, credential);
+
+            // Atualizar senha
+            await updatePassword(user, novaSenha);
+            return "Senha alterada com sucesso!";
+        } catch (error: any) {
+            switch (error.code) {
+            case "auth/wrong-password":
+                throw "Senha atual incorreta.";
+            case "auth/weak-password":
+                throw "A nova senha é muito fraca.";
+            case "auth/requires-recent-login":
+                throw "Faça login novamente para alterar a senha.";
+            default:
+                throw "Erro ao alterar senha: " + error.message;
+            }
+        }
+        }
 }

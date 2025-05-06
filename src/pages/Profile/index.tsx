@@ -10,23 +10,101 @@ export function Profile() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [disableButton, setDisableButton] = useState<boolean>(false);
-    const [login, setLogin] = useState<IAccount>({uid:'', name:'Test', email: 'test@test.com', level:'user'});
+    const [login, setLogin] = useState<IAccount>({uid:'', name:'', email: '', level:''});
+    const [name, setName] = useState<string>('');
+    const [password, setPassword] = useState<{oldPassword: string, password:string, confirmPassword:string}>({oldPassword: '', password:'', confirmPassword:''});
+    const [editName, setEditName] = useState<boolean>(false);
+    const [editPassword, setEditPassword] = useState<boolean>(false);
+    const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
 
     useEffect(() => {
         document.title = "Perfil";
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const uid = user.uid;
-                const query = await AccountService.getAccountLevel(uid);
-                // setLogin(query);
+                const query = await AccountService.getAccount(uid);
+                setLogin(query);
             } 
         })
         return () => {
             unsubscribe();
         };
     }, []);
+
+    const validateFields = ():boolean => {
+
+        if (editName) {
+
+            if (name !== '') {
+                const nomeRegex = /^[A-Za-zÀ-ÿ\s]{2,}$/.test(name);
+                
+                if (!nomeRegex){
+                    setErro({campo: 'name', mensage: "Nome inválido"})
+                    return false;
+                }
+                
+                setErro({campo: '', mensage: ""})
+                return true;
+            }
+        } 
+
+        if(editPassword) {
+            if (password.password !== '' && password.confirmPassword !== "") {
+                
+                if (password.password !== password.confirmPassword){
+                    setErro({campo: 'password', mensage: "Senha está diferente"})
+                    return false;
+                } else if (password.password.length < 8) {
+                    setErro({campo: 'password', mensage: "Senha precisa de no mínimo 8 caracteres"})
+                    return false;
+                }
+                
+                setErro({campo: '', mensage: ""})
+                return true;
+            }
+        }
+        
+        setShowNotification({
+            active: true, 
+            mensage: "Preencha todos os campos", 
+            bgColor: "bg-orange-500"
+        });
+        return false;
+    }
+
+    const updateAccount = async () => {
+        setDisableButton(true);
+        if (validateFields()) {
+            try {
+                if(editName) {
+                    setLogin((prev) => ({...prev, name: name}));
+                    await AccountService.updateAccount(login);
+                }
+                if(editPassword) {
+                    await AccountService.updatePasswordAccount(password.oldPassword, password.password);
+                }
+
+                const query = await AccountService.getAccount(login.uid);
+                setLogin(query);
+                setEditName(false);
+                setEditPassword(false);
+                setShowNotification({
+                    active: true, 
+                    mensage: "Dados atualizados", 
+                    bgColor: "bg-green-600"
+                });
+
+            } catch (error) {
+                setShowNotification({
+                    active: true, 
+                    mensage: "" + error, 
+                    bgColor: "bg-orange-500"
+                });
+            }
+        }
+        setDisableButton(false);
+    }
 
     return(
         <>
@@ -50,13 +128,21 @@ export function Profile() {
                         {/* Campo Nome */}
                         <div className="w-[100%] mb-5">
                             <p className="mb-2">Nome:</p>
-                            <p className="flex items-center h-[45px] w-[403px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2">
-                                {login.name}
-                            </p>
-                            {/* <button type="button" onClick={() =>{}}
-                                className="bg-mygray-900 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
-                                ALTERAR SENHA
-                            </button> */}
+                            
+                            <div className="flex gap-4">
+                                <p className={`${editName && 'hidden'} flex items-center h-[45px] w-[403px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2`}>
+                                    {login.name}
+                                </p>
+                                <input type="text" 
+                                    className={`${!editName && 'hidden'} h-[45px] w-[403px] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2`}
+                                    placeholder="Novo nome"
+                                    onChange={(e) => setName(e.target.value)}/>
+                                
+                                <button type="button" onClick={() => setEditName(true)}
+                                    className={`${editName && 'hidden'} hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px] p-2 border-[2px] border-white`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Pencil-1--Streamline-Ultimate" height="24" width="24"><desc>Pencil 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.19 1.81002c-0.3406 -0.33916 -0.7449 -0.60748 -1.1898 -0.78945 -0.4449 -0.181969 -0.9214 -0.273985 -1.402 -0.270731 -0.4806 0.003255 -0.9558 0.101715 -1.3982 0.289691 -0.4423 0.18798 -0.8431 0.46175 -1.179 0.80549L2.521 16.345 0.75 23.25l6.905 -1.771 14.5 -14.49998c0.3437 -0.33593 0.6175 -0.73665 0.8055 -1.17901 0.188 -0.44235 0.2864 -0.91756 0.2897 -1.39819 0.0032 -0.48063 -0.0888 -0.95713 -0.2707 -1.40199 -0.182 -0.44486 -0.4503 -0.84925 -0.7895 -1.18981Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m16.606 2.26001 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.512 4.354 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m2.521 16.345 5.139 5.129" stroke-width="1.5"></path></svg>
+                                </button>
+                            </div>
                         </div>
                         
                         {/* Campo Email */}
@@ -76,64 +162,66 @@ export function Profile() {
                         {/* Campo Senha */}
                         <div className="w-[100%]">
                             <p className="mb-2">Senha:</p>
-                            <button className="bg-mygray-900 text-white font-bold h-[50px] w-[50%] rounded-[8px]" 
+
+                            <div className={`${!editPassword && 'hidden'} bg-mygray-200 p-4 rounded-[8px] border-[2px] border-mygray-500 w-[420px]`}>
+                                {/* Campo senha */}
+                                <div className="mb-4 w-[100%]">
+                                    <p>Senha antiga:</p> 
+                                    <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[45px] w-[100%]`}
+                                    type="password" 
+                                    placeholder="Senha"
+                                    onChange={(e) => setPassword((prev) => ({...prev, oldPassword:e.target.value}))}
+                                    />
+                                    <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                                </div>
+
+                                <div className="mb-4 w-[100%]">
+                                    <p>Nova Senha:</p> 
+                                    <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[45px] w-[100%]`}
+                                    type="password" 
+                                    placeholder="Senha"
+                                    onChange={(e) => setPassword((prev) => ({...prev, password:e.target.value}))}
+                                    />
+                                    <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                                </div>
+                                {/* Campo confirmar senha */}
+                                <div className="w-[100%]">
+                                    <p>Confirmar senha:</p> 
+                                    <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[45px] w-[100%]`}
+                                    type="password" 
+                                    placeholder="Confirmar senha"
+                                    onChange={(e) => setPassword((prev) => ({...prev, confirmPassword:e.target.value}))}
+                                    />
+                                    <p className={`${erro.campo === "password"? '' : 'hidden'} text-red-600`}>{erro.mensage}</p>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setEditPassword(true)} 
+                                className={`${editPassword && 'hidden'} hover:bg-mygray-400 bg-mygray-900 text-white font-bold h-[50px] w-[250px] rounded-[8px]`} 
                                 type="button">ALTERAR SENHA</button>
                         </div>
                     </div>
                 </div>
-            </div>        
-        </div>
 
-        {confirmModal && (
-            <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
-                <div className="bg-white p-6 rounded-[8px] w-[25%]">
-                    <div className="flex justify-between h-[10%] mb-3">
-                        <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
-                            CONFIRMAÇÃO
-                        </div>
-                        <button type="button" onClick={() => {
-                                setConfirmModal(false);
-                            }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2.5 2.5L12 12M21.5 21.5L12 12M12 12L2.5 21.5L21.5 2.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div className="text-center mb-10">
-                        <div className="flex mt-[50px] mb-4 items-center justify-center">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_514_1034)">
-                                    <path d="M41.625 2H18.375L1.875 18.25V41.7501L18.375 58.0001H41.625L58.125 41.7501V18.25L41.625 2Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M29.875 46.25C31.946 46.25 33.625 44.5712 33.625 42.5C33.625 40.429 31.946 38.75 29.875 38.75C27.8038 38.75 26.125 40.429 26.125 42.5C26.125 44.5712 27.8038 46.25 29.875 46.25Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M34.875 17.5C34.875 20.25 29.875 31.25 29.875 31.25C29.875 31.25 24.8749 20.25 24.8749 17.5C24.8749 14.75 27.125 12.5 29.875 12.5C32.625 12.5 34.875 14.75 34.875 17.5Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_514_1034">
-                                        <rect width="60" height="60" fill="white"/>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </div>
-                        Deseja excluir essa conta?
-                    </div>
-                    
-                    <div className="h-[20%] flex justify-between items-center gap-4 *:font-bold *:py-1 *:px-10">
-                        <button onClick={() => {
-                                setConfirmModal(false);
+                <div className={`${!editName && !editPassword && 'hidden'} my-12 col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10`}>
+                        <button type="button"
+                            onClick={() => {
+                                setEditName(false);
+                                setEditPassword(false);
                             }} 
-                            className="w-[300px] border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
+                            className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
                             CANCELAR
                         </button>
-                        <button type="button"
-                            disabled={disableButton}
-                            className="w-[300px] border-[2px] border-black bg-black rounded-[8px] text-white hover:bg-mygray-600">
-                            EXCLUIR
+                        <button onClick={updateAccount} 
+                        disabled={disableButton}
+                            type="button" 
+                            className="bg-black rounded-[8px] text-white hover:bg-mygray-600">
+                            CADASTRAR
                         </button>
-                    </div>
                 </div>
-            </div>
-        )}
+            </div>        
+        </div>
         </>
     )
 }

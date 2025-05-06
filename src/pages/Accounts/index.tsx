@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Notification } from "../../components/Notification";
 import { AccountService, IAccount } from "../../services/accountService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../firebaseConfig";
+import { query } from "firebase/firestore";
 
 export function Accounts() {
     const [accounts, setAccounts] = useState<IAccount[]>([]);
@@ -13,7 +14,6 @@ export function Accounts() {
     );
     const [filtradas, setFiltradas] = useState<IAccount[]>([]);
     const [busca, setBusca] = useState<string>('');
-    const [fieldBusca, setFieldBusca] = useState<boolean>(true);
     const [confirmModal, setConfirmModal] = useState<boolean>(false);
     const [AccountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:''});
     const [idDelet, setIdDelet] = useState<string>('');
@@ -94,6 +94,12 @@ export function Accounts() {
         }
     }
 
+    
+    // if (login === "user"){
+    //     return (
+    //         useNavigate()('/cadastros-eimerias')
+    //     )
+    // }
 
     return(
         <>
@@ -139,7 +145,6 @@ export function Accounts() {
                                             <button type="button"
                                                 onClick={() => {
                                                     setAccountItem(item);
-                                                    setFieldBusca(false);
                                                 }} 
                                                 className="hover:border-[2px] hover:border-mygray-400 hover:bg-mygray-300 rounded-[8px]">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="Pencil-1--Streamline-Ultimate" height="24" width="24"><desc>Pencil 1 Streamline Icon: https://streamlinehq.com</desc><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M22.19 1.81002c-0.3406 -0.33916 -0.7449 -0.60748 -1.1898 -0.78945 -0.4449 -0.181969 -0.9214 -0.273985 -1.402 -0.270731 -0.4806 0.003255 -0.9558 0.101715 -1.3982 0.289691 -0.4423 0.18798 -0.8431 0.46175 -1.179 0.80549L2.521 16.345 0.75 23.25l6.905 -1.771 14.5 -14.49998c0.3437 -0.33593 0.6175 -0.73665 0.8055 -1.17901 0.188 -0.44235 0.2864 -0.91756 0.2897 -1.39819 0.0032 -0.48063 -0.0888 -0.95713 -0.2707 -1.40199 -0.182 -0.44486 -0.4503 -0.84925 -0.7895 -1.18981Z" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m16.606 2.26001 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m14.512 4.354 5.134 5.134" stroke-width="1.5"></path><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="m2.521 16.345 5.139 5.129" stroke-width="1.5"></path></svg>
