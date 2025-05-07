@@ -255,7 +255,7 @@ export function Profile() {
                     </div>
                 </div>
 
-                <div className={`${!editName && !editPassword && 'hidden'} my-12 col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10`}>
+                <div className={`${!editName && !editPassword && 'hidden'} mb-5 mt-12 col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10`}>
                         <button type="button"
                             onClick={() => {
                                 setEditName(false);

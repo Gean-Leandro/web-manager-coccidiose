@@ -121,12 +121,12 @@ export function Accounts() {
 
                         {/* Campo buscar */}
                         <div className="mb-2 w-[100%] flex justify-center items-center">
-                            <input className="bg-white border-[2px] border-r-black border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[400px]"
+                            <input className="bg-white border-[2px] border-r-[0px] border-mygray-500 rounded-l-[8px] pl-2 h-[35px] w-[400px]"
                             type="text" 
                             placeholder="E-mail"
                             onChange={(e) => setBusca(e.target.value)}/>
                             <button type="button" onClick={handleBuscar}
-                                className="bg-mygray-900 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
+                                className="bg-mygray-900 hover:bg-mygray-600 text-white font-bold h-[35px] w-[100px]  rounded-r-[8px]">
                                 BUSCAR
                             </button>
                         </div>

@@ -10,7 +10,7 @@ export function NewAccount() {
     const [showNotification, setShowNotification] = useState<{active:boolean, mensage:string, bgColor:string}>(
         {active:false, mensage:"", bgColor:""}
     );
-    const [accountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:''});
+    const [accountItem, setAccountItem] = useState<IAccount>({uid: '', name: '', email:'', level:'', active: true});
     const [level, setLevel] = useState<string>('user');
     const [disableButton, setDisableButton] = useState<boolean>(false);
     const [erro, setErro] = useState<{campo: string, mensage: string}>({campo: '', mensage:''});
@@ -165,7 +165,7 @@ export function NewAccount() {
 
                         {/* Campo senha */}
                         <div className="mb-4 w-[100%]">
-                            <p>Senha</p> 
+                            <p>Senha:</p> 
                             <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[35px] w-[400px]`}
                             type="password" 
                             placeholder="Senha"
@@ -176,7 +176,7 @@ export function NewAccount() {
 
                         {/* Campo confirmar senha */}
                         <div className="w-[100%]">
-                            <p>Confirmar senha</p> 
+                            <p>Confirmar senha:</p> 
                             <input className={`${erro.campo == "password" ? 'border-red-600': 'border-mygray-500'} bg-white border-[2px] rounded-[8px] pl-2 h-[35px] w-[400px]`}
                             type="password" 
                             placeholder="Confirmar senha"
@@ -189,7 +189,7 @@ export function NewAccount() {
 
                 </div>
                 
-                <div className="col-span-6 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
+                <div className="col-span-6 mb-5 flex justify-end gap-4 *:font-bold *:py-4 *:px-10">
                     <Link to={'/contas'} className="border-[2px] border-black rounded-[8px] hover:bg-mygray-600 hover:text-white">
                         CANCELAR
                     </Link>
@@ -205,7 +205,7 @@ export function NewAccount() {
             {confirmModal && (
                 <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-[8px] w-[25%]">
-                        <div className="flex justify-between h-[10%] mb-3">
+                        <div className="flex justify-between h-[10%] mb-10">
                             <div className="font-bold h-[24px] justify-center text-[18px] pl-8 flex items-center w-[90%]">
                                 CONFIRMAÇÃO
                             </div>
@@ -219,24 +219,9 @@ export function NewAccount() {
                         </div>
 
                         <div className="text-center mb-5">
-                            <div className="flex mt-[50px] mb-4 items-center justify-center">
-                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <g clip-path="url(#clip0_514_1034)">
-                                        <path d="M41.625 2H18.375L1.875 18.25V41.7501L18.375 58.0001H41.625L58.125 41.7501V18.25L41.625 2Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M29.875 46.25C31.946 46.25 33.625 44.5712 33.625 42.5C33.625 40.429 31.946 38.75 29.875 38.75C27.8038 38.75 26.125 40.429 26.125 42.5C26.125 44.5712 27.8038 46.25 29.875 46.25Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M34.875 17.5C34.875 20.25 29.875 31.25 29.875 31.25C29.875 31.25 24.8749 20.25 24.8749 17.5C24.8749 14.75 27.125 12.5 29.875 12.5C32.625 12.5 34.875 14.75 34.875 17.5Z" stroke="#F97316" stroke-width="4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_514_1034">
-                                            <rect width="60" height="60" fill="white"/>
-                                        </clipPath>
-                                    </defs>
-                                </svg>
-                            </div>
                             Digite a sua senha para criar a conta
-                            <div className="bg-mygray-200 mt-4 p-4 rounded-[8px] border-[2px] border-mygray-500">
-                                <p className="text-start">Senha:</p>
-                                <input className="border-mygray-500 bg-white border-[2px] rounded-[8px] pl-2 mt-1 h-[35px] w-[100%]" 
+                            <div className="mt-3">
+                                <input className="mt-2 h-[45px] w-[100%] bg-mygray-200 border-[2px] border-mygray-500 rounded-[8px] px-2" 
                                     onChange={(e) => setPasswordAccount(e.target.value)}
                                     type="password" 
                                     placeholder="Senha"/>

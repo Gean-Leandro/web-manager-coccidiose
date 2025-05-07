@@ -90,24 +90,72 @@ export function NewEimeria(){
         }
     };
 
-    const addNewEimeria = async () => {
-            try {
-                await EimeriaService.salvarEimeria(eimeria, category);
+    const validateFields = (): boolean => {
+        if (eimeria.name !== ''){
+            if(eimeria.imgLocal !== ''){
+                if(eimeria.clinical_signs.length > 0){
+                    if(eimeria.general_description.length > 0){
+                        if (eimeria.place_of_action.length > 0){
+                            return true;
+                        } else {
+                            setShowNotification({
+                                active: true,
+                                mensage: "Insira pelo menos um local de ação",
+                                bgColor: "bg-orange-500",
+                            });
+                            return false;
+                        }
+                    } else {
+                        setShowNotification({
+                            active: true,
+                            mensage: "Insira pelo menos uma descrição geral",
+                            bgColor: "bg-orange-500",
+                        });
+                        return false;
+                    }
+                } else {
+                    setShowNotification({
+                        active: true,
+                        mensage: "Insira pelo menos um sinal clínicio ou Sinal macroscópico",
+                        bgColor: "bg-orange-500",
+                    });
+                    return false;
+                }
+            } else {
                 setShowNotification({
                     active: true,
-                    mensage: "Nova espécie cadastrada!",
-                    bgColor: "bg-green-600",
-                });
-                navigate('/cadastros-eimerias')
-            } catch (error) {
-                setShowNotification({
-                    active: true,
-                    mensage: "Erro: " + error,
+                    mensage: "Selecione uma imagem da área de ação",
                     bgColor: "bg-orange-500",
                 });
-                
+                return false;
             }
-        // }
+        } else {
+            setShowNotification({
+                active: true,
+                mensage: "Preencha o campo nome",
+                bgColor: "bg-orange-500",
+            });
+            return false;
+        }
+    } 
+
+    const addNewEimeria = async () => {        
+        try {
+            await EimeriaService.salvarEimeria(eimeria, category);
+            setShowNotification({
+                active: true,
+                mensage: "Nova espécie cadastrada!",
+                bgColor: "bg-green-600",
+            });
+            navigate('/cadastros-eimerias')
+        } catch (error) {
+            setShowNotification({
+                active: true,
+                mensage: "Erro: " + error,
+                bgColor: "bg-orange-500",
+            });
+            
+        }
     } 
 
     return(
