@@ -7,6 +7,7 @@ export interface IAccount {
     name: string,
     email: string,
     level: string,
+    active: boolean
 }
 
 export const AccountService = {
@@ -25,7 +26,8 @@ export const AccountService = {
                 uid: user.uid,
                 name: nome,
                 level: nivel,
-                email: email
+                email: email,
+                active: true
             });
         } catch (error) {
             throw error
@@ -68,7 +70,8 @@ export const AccountService = {
                     uid: docSnap.data().uid, 
                     name: docSnap.data().name,
                     email: docSnap.data().email,
-                    level: docSnap.data().level
+                    level: docSnap.data().level,
+                    active: docSnap.data().active
                 };
             } else {
                 throw "Usuário não encontrado na coleção accounts.";
@@ -93,7 +96,8 @@ export const AccountService = {
         try {
             await updateDoc(docRef, {
                 name: account.name,
-                level: account.level
+                level: account.level,
+                active: account.active
             });
           } catch (error) {
             throw error

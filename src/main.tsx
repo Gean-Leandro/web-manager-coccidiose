@@ -14,6 +14,8 @@ import { Accounts } from './pages/Accounts';
 import { NewAccount } from './pages/NewAccount';
 import { PrivateRoute } from './components/PrivateRoute';
 import { Profile } from './pages/Profile';
+import { ViewAccount } from './pages/ViewAccount';
+import { EditAccount } from './pages/EditAccount';
 
 const router = createBrowserRouter([
   { path:'/', element: <Login/>},
@@ -24,9 +26,11 @@ const router = createBrowserRouter([
   { path:'/glossario', element: <PrivateRoute><Glossary/></PrivateRoute>},
   { path:'/referencias', element: <PrivateRoute><References/></PrivateRoute>},
   { path:'/nomes-cientificos', element: <PrivateRoute><ScientificNames/></PrivateRoute>},
-  { path:'/contas', element: <PrivateRoute><Accounts/></PrivateRoute>},
-  { path:'/nova-conta', element: <PrivateRoute><NewAccount/></PrivateRoute>},
-  { path:'/perfil', element: <PrivateRoute><Profile/></PrivateRoute>}
+  { path:'/contas', element: <PrivateRoute requireAdmin><Accounts/></PrivateRoute>},
+  { path:'/nova-conta', element: <PrivateRoute requireAdmin><NewAccount/></PrivateRoute>},
+  { path:'/perfil', element: <PrivateRoute><Profile/></PrivateRoute>},
+  { path:'/visualizando-conta', element: <PrivateRoute requireAdmin><ViewAccount/></PrivateRoute>},
+  { path:'/editando-conta', element: <PrivateRoute requireAdmin><EditAccount/></PrivateRoute>},
 ]);
 
 createRoot(document.getElementById("root")!).render(
